@@ -126,7 +126,7 @@ class Primer():
 
 if __name__=="__main__":
     import primer3
-    primer1=Primer("AAAAAAAAAA")
+    primer1 = Primer("AAAAAAAAAA")
     print(primer1.Tm)
     print(primer3.calc_tm("AAAAAAAAAA"))
     primer2 = Primer("GGCCGGAGTAAGCTGACAT")
