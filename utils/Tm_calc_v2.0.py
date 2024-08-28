@@ -3,20 +3,24 @@ from math import sqrt,log
 
 class Primer():
     
-    def __init__(self, seq) -> None:
+    def __init__(self, seq, template) -> None:
         # Tables of nearest-neighbor thermodynamics for DNA bases, from the
         # paper [SantaLucia JR (1998) "A unified view of polymer, dumbbell
         # and oligonucleotide DNA nearest-neighbor thermodynamics", Proc Natl
         # Acad Sci 95:1460-65 http://dx.doi.org/10.1073/pnas.95.4.1460]
 
-        self.delta_h = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
+        # match table of dH dS
+        self.dH_m = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
 
-        self.delta_s = [222, 224, 210, 204, 224, 227, 199, 272, 210, 272, 222, 244, 199, 224, 244, 213, 222, 227, 222, 227, 168, 210, 220, 215, 220]
+        self.dS_m = [222, 224, 210, 204, 224, 227, 199, 272, 210, 272, 222, 244, 199, 224, 244, 213, 222, 227, 222, 227, 168, 210, 220, 215, 220]
 
+        # mismatch table of dH dS
+        
         # End of tables nearest-neighbor parameter ------------------------------
         
         # init values
         self.seq = seq
+        self.template = template
         self.T_KELVIN = 273.15
         self.K_mM = 50
         self.ds = 0
@@ -36,7 +40,11 @@ class Primer():
         
         # cal Tm
         self.calc_tm()
-        
+    
+    @staticmethod
+    def is_complement(seq1:str, seq2:str):
+        trantab = str.maketrans('ACGTN', 'TGCAN')
+        return seq1.upper().translate(trantab) == seq2.upper()
 
     def base2int(self, base:str) -> int:
         trantab = str.maketrans('ACGTN', '01234')
@@ -78,7 +86,15 @@ class Primer():
         if self.divalent < self.dntp:self.divalent = self.dntp
         return 120 * sqrt((self.divalent - self.dntp))
 
-
+    def calc_match(self):
+        ...
+    
+    
+    def calc_mismatch(self):
+        ...
+    
+    def calc_gap(self):
+        ...
 
     def calc_tm(self):
         '''
@@ -104,15 +120,28 @@ class Primer():
         # calculate delta by NN 
         for i,s in enumerate(self.seq):
             if  i == 0 :continue
-            two_mer = self.seq[i-1] + s
-            d_index = self.base2int(two_mer)
-            self.dh += self.delta_h[d_index]
-            self.ds += self.delta_s[d_index]
+            two_mer_primer = self.seq[i-1] + s
+            two_mer_tmp = self.template[i-1] + s
+            # match 
+            if Primer.is_complement(two_mer_primer, two_mer_tmp):
+                d_index = self.base2int(two_mer_primer)
+                self.dh += -100 * self.delta_h[d_index]
+                self.ds += -0.1 * self.delta_s[d_index]
+            else:  ## mismatch and gap
+                # two gap
+                if two_mer_primer == "--" or two_mer_tmp == "--":
+                    self.ds -= 9.35
+                elif two_mer_primer.find("-") > -1 or two_mer_tmp.find("-") > -1: # one gap
+                    ...
+                else: # mismatch
+                    ...
+                    
+                    
             
         
         # init value and salt corrections and calculate Tm finally
-        self.dh *= -100
-        self.ds *= -0.1
+        # self.dh *= -100
+        # self.ds *= -0.1
 
         self.GC_count = 0 if self.formamide_conc == 0.0 else str.count(self.seq,"C") + str.count(self.seq,"G")
         self.K_mM += self.divalent_to_monovalent()
