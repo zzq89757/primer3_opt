@@ -1,4 +1,5 @@
 import pandas as pd
+from decimal import Decimal
 
 
 def base2int(base:str) -> int:
@@ -8,7 +9,8 @@ def base2int(base:str) -> int:
 
 def fill_N(df:pd.DataFrame) -> dict:
     dh_dict = {}
-    dh_li_m = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
+    # dh_li_m = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
+    dh_li_m = [222, 224, 210, 204, 224, 227, 199, 272, 210, 272, 222, 244, 199, 224, 244, 213, 222, 227, 222, 227, 168, 210, 220, 215, 220]
     # 每四个碱基根据平均值补一个N
     base_li = ['A','C','G','T']
     basen_li = base_li + ['N']
@@ -20,15 +22,15 @@ def fill_N(df:pd.DataFrame) -> dict:
                 sum_1 = 0
                 for l in base_li:
                     duplex = f"{i}{j}/{k}{l}"
-                    dh = df.loc[df[0] == duplex][1]
-                    ds = df.loc[df[0] == duplex][2]
-                    dh_data = int(dh.values[0]) if len(dh) else dh_li_m[base2int(duplex[:2])] * -100
+                    dh = df.loc[df[0] == duplex][2]
+                    # ds = df.loc[df[0] == duplex][2]
+                    dh_data = dh.values[0] if len(dh) else dh_li_m[base2int(duplex[:2])] * -0.1
                     sum_1 += dh_data
-                    dh_dict[duplex] = dh_data
+                    dh_dict[duplex] = round(dh_data, 1)
                     # print(f"{duplex}\t{dh_data}")
                 
-                sum_2 += int(sum_1/4)
-                dh_dict[f"{duplex[:4]}N"] = int(sum_1/4)
+                sum_2 += sum_1/4
+                dh_dict[f"{duplex[:4]}N"] = round(sum_1/4, 1)
                 
             # /NA /NC /NG /NT /NN
             for l2 in base_li:
@@ -36,19 +38,19 @@ def fill_N(df:pd.DataFrame) -> dict:
                 sum = 0
                 for l3 in base_li:
                     sum += dh_dict[f"{i}{j}/{l3}{l2}"]
-                dh_dict[f"{i}{j}/N{l2}"] = int(sum/4)
-            dh_dict[f"{i}{j}/NN"] = int(sum_2/4)
+                dh_dict[f"{i}{j}/N{l2}"] = round(sum/4, 1)
+            dh_dict[f"{i}{j}/NN"] = round(sum_2/4, 1)
     
         # XN/XX
         for x in basen_li:
             for y in basen_li:
-                dh_dict[f"{i}N/{x}{y}"] = int((dh_dict[f"{i}A/{x}{y}"] + dh_dict[f"{i}C/{x}{y}"] + dh_dict[f"{i}G/{x}{y}"] + dh_dict[f"{i}T/{x}{y}"])/4)
+                dh_dict[f"{i}N/{x}{y}"] = round((dh_dict[f"{i}A/{x}{y}"] + dh_dict[f"{i}C/{x}{y}"] + dh_dict[f"{i}G/{x}{y}"] + dh_dict[f"{i}T/{x}{y}"])/4, 1)
         
     #NX/XX
     for x1 in basen_li:
         for y1 in basen_li:
             for z1 in basen_li:
-                dh_dict[f"N{x1}/{y1}{z1}"] = int((dh_dict[f"A{x1}/{y1}{z1}"] + dh_dict[f"C{x1}/{y1}{z1}"] + dh_dict[f"T{x1}/{y1}{z1}"] + dh_dict[f"G{x1}/{y1}{z1}"])/4)
+                dh_dict[f"N{x1}/{y1}{z1}"] = round((dh_dict[f"A{x1}/{y1}{z1}"] + dh_dict[f"C{x1}/{y1}{z1}"] + dh_dict[f"T{x1}/{y1}{z1}"] + dh_dict[f"G{x1}/{y1}{z1}"])/4, 1)
     
     return dh_dict
 
