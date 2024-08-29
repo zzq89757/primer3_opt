@@ -9,10 +9,6 @@ class Primer():
         # and oligonucleotide DNA nearest-neighbor thermodynamics", Proc Natl
         # Acad Sci 95:1460-65 http://dx.doi.org/10.1073/pnas.95.4.1460]
 
-        # match table of dH dS
-        self.dH_m = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
-
-        self.dS_m = [222, 224, 210, 204, 224, 227, 199, 272, 210, 272, 222, 244, 199, 224, 244, 213, 222, 227, 222, 227, 168, 210, 220, 215, 220]
 
         # hybridition match table of dH dS
         self.dH_mm = [
@@ -305,23 +301,11 @@ class Primer():
     @staticmethod
     def is_complement(seq1:str, seq2:str):
         return Primer.complement(seq1) == seq2.upper()
-
-    def base2int(self, base:str) -> int:
+    
+    @staticmethod
+    def duplex2idx(duplex:str) -> int:
         trantab = str.maketrans('ACGTN', '01234')
-        return int(base.upper().translate(trantab), base=5)
-
-    def base10to6(self, num):
-        l = []
-        while True:
-            num, remainder = divmod(num, 5)
-            l.append(str(remainder))
-            if num == 0:return ''.join(l[::-1]) 
-            
-    def int2base(self, int:int) -> str:
-        trantab = str.maketrans('01234', 'ACGTN')
-        int6 = self.base10to6(int).zfill(2)
-        return int6.translate(trantab)
-
+        return int(duplex.upper().translate(trantab), base=5)
 
     def symmetry(self):
         '''
@@ -346,15 +330,6 @@ class Primer():
         if self.divalent < self.dntp:self.divalent = self.dntp
         return 120 * sqrt((self.divalent - self.dntp))
 
-    def calc_match(self):
-        ...
-    
-    
-    def calc_mismatch(self):
-        ...
-    
-    def calc_gap(self):
-        ...
 
     def calc_tm(self):
         '''
@@ -380,29 +355,30 @@ class Primer():
         # calculate delta by NN 
         for i,s in enumerate(self.seq):
             if  i == 0 :continue
-            two_mer_primer = self.seq[i-1] + s
-            two_mer_tmp = self.template[i-1] + s
-            # match 
-            if Primer.is_complement(two_mer_primer, two_mer_tmp):
-                d_index = self.base2int(two_mer_primer)
-                self.dh += -100 * self.dH_m[d_index]
-                self.ds += -0.1 * self.dS_m[d_index]
-            else:  ## mismatch and gap
-                # two gap
+            two_mer_primer:str = self.seq[i-1] + s
+            two_mer_tmp:str = self.template[i-1] + s
+
+            # gap found
+            if two_mer_primer.find("-") > -1 or two_mer_tmp.find("-") > -1:
+                # two gap found
                 if two_mer_primer == "--" or two_mer_tmp == "--":
                     self.ds -= 9.35
-                elif two_mer_primer.find("-") > -1 or two_mer_tmp.find("-") > -1: # one gap
+                # one gap 
+                else:
                     ...
-                else: # mismatch
-                    # convert duplex to digital code
-                    self.ds
-                    
+            # match or mismatch
+            else:
+                # convert duplex to digital code
+                idx  = Primer.duplex2idx(two_mer_primer + two_mer_tmp)
+                # computation
+                self.dh += self.dH_mm[idx]
+                self.ds += self.dS_mm[idx]
+                
+                
                     
             
         
         # init value and salt corrections and calculate Tm finally
-        # self.dh *= -100
-        # self.ds *= -0.1
 
         self.GC_count = 0 if self.formamide_conc == 0.0 else str.count(self.seq,"C") + str.count(self.seq,"G")
         self.K_mM += self.divalent_to_monovalent()
