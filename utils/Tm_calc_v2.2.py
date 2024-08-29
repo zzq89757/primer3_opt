@@ -345,16 +345,8 @@ class Primer():
             self.base /= 4
         
         # Terminal AT penalty 
-        for i in [self.seq[0],self.seq[-1]]:
-            if i in ["A","T"]:
-                self.ds += 4.1
-                self.dh += 2300
-            else:
-                self.ds += -2.8
-                self.dh += 100
-        # Terminal AT penalty 
-        for i in [self.template[0],self.template[-1]]:
-            if i in ["A","T"]:
+        for i,j in zip([self.seq[0],self.seq[-1]],[self.template[0],self.template[-1]]):
+            if i in ["A","T"] or j in ["A","T"]:
                 self.ds += 4.1
                 self.dh += 2300
             else:
@@ -390,7 +382,7 @@ class Primer():
 
 if __name__=="__main__":
     import primer3
-    primer1 = Primer("CGATGTGCTAGTTAGTTCNN","GCTACACGATCAATCAAGCT")
+    primer1 = Primer("CGATGTGCTAGTTAGTTCNN","GCTACACGATCAATCAAGTA")
     print(primer1.Tm)
     print(primer3.calc_tm("CGATGTGCTAGTTAGTTCNN"))
     # primer2 = Primer("GGCCGGAGTAAGCTGACAT")
