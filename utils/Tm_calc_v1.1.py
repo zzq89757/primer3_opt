@@ -8,10 +8,18 @@ class Primer():
         # paper [SantaLucia JR (1998) "A unified view of polymer, dumbbell
         # and oligonucleotide DNA nearest-neighbor thermodynamics", Proc Natl
         # Acad Sci 95:1460-65 http://dx.doi.org/10.1073/pnas.95.4.1460]
+        #                A   C   G   T   N
+        self.delta_h = [79, 84, 78, 72, 72, # A
+                        85, 80, 106, 78, 78,# C
+                        82, 98, 80, 84, 80, # G
+                        72, 82, 85, 79, 72, # T
+                        72, 80, 78, 72, 72] # N
 
-        self.delta_h = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
-
-        self.delta_s = [222, 224, 210, 204, 224, 227, 199, 272, 210, 272, 222, 244, 199, 224, 244, 213, 222, 227, 222, 227, 168, 210, 220, 215, 220]
+        self.delta_s = [222, 224, 210, 204, 224, 
+                        227, 199, 272, 210, 272, 
+                        222, 244, 199, 224, 244, 
+                        213, 222, 227, 222, 227, 
+                        168, 210, 220, 215, 220]
 
         # End of tables nearest-neighbor parameter ------------------------------
         

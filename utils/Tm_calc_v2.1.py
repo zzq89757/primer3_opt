@@ -3,7 +3,7 @@ from math import sqrt,log
 
 class Primer():
     
-    def __init__(self, seq, template) -> None:
+    def __init__(self, seq:str, template:str="") -> None:
         # Tables of nearest-neighbor thermodynamics for DNA bases, from the
         # paper [SantaLucia JR (1998) "A unified view of polymer, dumbbell
         # and oligonucleotide DNA nearest-neighbor thermodynamics", Proc Natl
@@ -136,9 +136,12 @@ class Primer():
         55905,56518,55274,56880,56144, # NN/CA NN/CC NN/CG NN/CT NN/CN 
         55318,54705,49199,49043,52066, # NN/GA NN/GC NN/GG NN/GT NN/GN 
         55761,55249,42999,49799,50952, # NN/TA NN/TC NN/TG NN/TT NN/TN 
-        57495,55716,50844,53038,54273  # NN/NA NN/NC NN/NG NN/NT NN/NN 
+        57495,55716,50844,53038,5427.3  # NN/NA NN/NC NN/NG NN/NT NN/NN 
         ]
 
+        
+        
+        
         self.dS_mm = [
         99999.0,99999.0,99999.0,12.9,75002.5, # AA/AA AA/AC AA/AG AA/AT AA/AN 
         99999.0,99999.0,99999.0,20.2,75004.3, # AA/CA AA/CC AA/CG AA/CT AA/CN 
@@ -271,8 +274,8 @@ class Primer():
         # End of tables nearest-neighbor parameter ------------------------------
         
         # init values
-        self.seq = seq
-        self.template = template or Primer.complement(self.seq)
+        self.seq = seq.replace("-","N")
+        self.template = template.replace("-","N") if template else Primer.complement(self.seq)
         self.T_KELVIN = 273.15
         self.K_mM = 50
         self.ds = 0
@@ -340,40 +343,29 @@ class Primer():
         # symmetry correction if seq is symmetrical
         sym = self.symmetry()
         if sym:
-            self.ds += 14
+            self.ds += -1.4
             self.base /= 4
         
         # Terminal AT penalty 
         for i in [self.seq[0],self.seq[-1]]:
             if i in ["A","T"]:
-                self.ds += -41
-                self.dh += -23
+                self.ds += 4.1
+                self.dh += 2300
             else:
-                self.ds += 28
-                self.dh += -1
+                self.ds += -2.8
+                self.dh += 100
         
 
         # calculate delta by NN 
         for i,s in enumerate(self.seq):
             if  i == 0 :continue
             two_mer_primer:str = self.seq[i-1] + s
-            two_mer_tmp:str = self.template[i-1] + s
-
-            # gap found
-            if two_mer_primer.find("-") > -1 or two_mer_tmp.find("-") > -1:
-                # two gap found
-                if two_mer_primer == "--" or two_mer_tmp == "--":
-                    self.ds -= 9.35
-                # one gap 
-                else:
-                    ...
-            # match or mismatch
-            else:
-                # convert duplex to digital code
-                idx  = Primer.duplex2idx(two_mer_primer + two_mer_tmp)
-                # computation
-                self.dh += self.dH_mm[idx]
-                self.ds += self.dS_mm[idx]
+            two_mer_tmp:str = self.template[i-1:i+1]
+            # convert duplex to digital code
+            idx  = Primer.duplex2idx(two_mer_primer + two_mer_tmp)
+            # computation
+            self.dh += self.dH_mm[idx]
+            self.ds += self.dS_mm[idx]
                 
                 
                     
@@ -388,14 +380,13 @@ class Primer():
         self.Tm = self.dh / (self.ds + 1.987 * log(self.DNA_nM / self.base)) - self.T_KELVIN
         self.Tm -= self.dmso_conc * self.dmso_fact
         self.Tm += (0.453 * self.GC_count / len(self.seq) - 2.88) * self.formamide_conc
-        return self.Tm
 
 
 if __name__=="__main__":
     import primer3
-    primer1 = Primer("AAAAAAAAAA")
+    primer1 = Primer("CGATGTGCTAGTTAGTTA","GCTACACGATCAATCAAG")
     print(primer1.Tm)
-    print(primer3.calc_tm("AAAAAAAAAA"))
-    primer2 = Primer("GGCCGGAGTAAGCTGACAT")
-    print(primer2.Tm)
-    print(primer3.calc_tm("GGCCGGAGTAAGCTGACAT"))
+    print(primer3.calc_tm("CGATGTGCTAGTTAGTTA"))
+    # primer2 = Primer("GGCCGGAGTAAGCTGACAT")
+    # print(primer2.Tm)
+    # print(primer3.calc_tm("GGCCGGAGTAAGCTGACAT"))

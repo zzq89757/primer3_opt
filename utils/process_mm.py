@@ -9,8 +9,8 @@ def base2int(base:str) -> int:
 
 def fill_N(df:pd.DataFrame) -> dict:
     dh_dict = {}
-    # dh_li_m = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
-    dh_li_m = [222, 224, 210, 204, 224, 227, 199, 272, 210, 272, 222, 244, 199, 224, 244, 213, 222, 227, 222, 227, 168, 210, 220, 215, 220]
+    dh_li_m = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
+    # dh_li_m = [222, 224, 210, 204, 224, 227, 199, 272, 210, 272, 222, 244, 199, 224, 244, 213, 222, 227, 222, 227, 168, 210, 220, 215, 220]
     # 每四个碱基根据平均值补一个N
     base_li = ['A','C','G','T']
     basen_li = base_li + ['N']
@@ -22,9 +22,9 @@ def fill_N(df:pd.DataFrame) -> dict:
                 sum_1 = 0
                 for l in base_li:
                     duplex = f"{i}{j}/{k}{l}"
-                    dh = df.loc[df[0] == duplex][2]
+                    dh = df.loc[df[0] == duplex][1]
                     # ds = df.loc[df[0] == duplex][2]
-                    dh_data = dh.values[0] if len(dh) else dh_li_m[base2int(duplex[:2])] * -0.1
+                    dh_data = dh.values[0] if len(dh) else dh_li_m[base2int(duplex[:2])] * -100
                     sum_1 += dh_data
                     dh_dict[duplex] = round(dh_data, 1)
                     # print(f"{duplex}\t{dh_data}")
