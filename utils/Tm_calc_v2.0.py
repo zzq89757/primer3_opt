@@ -16,6 +16,7 @@ class Primer():
 
         # mismatch table of dH dS
         
+        
         # End of tables nearest-neighbor parameter ------------------------------
         
         # init values
@@ -42,9 +43,13 @@ class Primer():
         self.calc_tm()
     
     @staticmethod
-    def is_complement(seq1:str, seq2:str):
+    def complement(seq:str) -> str:
         trantab = str.maketrans('ACGTN', 'TGCAN')
-        return seq1.upper().translate(trantab) == seq2.upper()
+        return seq.upper().translate(trantab)
+    
+    @staticmethod
+    def is_complement(seq1:str, seq2:str):
+        return Primer.complement(seq1) == seq2.upper()
 
     def base2int(self, base:str) -> int:
         trantab = str.maketrans('ACGTN', '01234')
