@@ -272,7 +272,7 @@ class Primer():
         
         # init values
         self.seq = seq
-        self.template = template
+        self.template = template or Primer.complement(self.seq)
         self.T_KELVIN = 273.15
         self.K_mM = 50
         self.ds = 0
@@ -292,7 +292,8 @@ class Primer():
         
         # cal Tm
         self.calc_tm()
-    
+        
+    # utils method start 
     @staticmethod
     def complement(seq:str) -> str:
         trantab = str.maketrans('ACGTN', 'TGCAN')
