@@ -277,9 +277,6 @@ class Primer {
     this.divalent = 1.5
     this.dntp = 0.6
     this.monovalent = 50
-
-    // cal Tm
-    // this.calc_tm()
   }
 
   static complement(seq) {
@@ -353,6 +350,8 @@ class Primer {
 
 }
 
+
+// example
 const primer = new Primer("CGATGTGCTAGTTAGTTCNN", "GCTACACGATCAATCAAGTA")
 primer.calcTm()
 console.log(primer.Tm)
