@@ -273,7 +273,7 @@ class Primer {
     this.DNA_nM = 50
     this.dmso_conc = 0
     this.dmso_fact = 0.6
-    this.formamide_conc = 0.8
+    this.formamide_conc = 0.0
     this.divalent = 1.5
     this.dntp = 0.6
     this.monovalent = 50
@@ -352,6 +352,6 @@ class Primer {
 
 
 // example
-const primer = new Primer("CGATGTGCTAGTTAGTTCNN", "GCTACACGATCAATCAAGTA")
+const primer = new Primer('TAGCTAGCTAGCTAGCTATGCTATCG','ATCGATCGATCGATCGATACGATAGC')
 primer.calcTm()
 console.log(primer.Tm)

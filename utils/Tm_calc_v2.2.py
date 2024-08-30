@@ -286,7 +286,7 @@ class Primer():
         self.DNA_nM = 50
         self.dmso_conc = 0
         self.dmso_fact = 0.6
-        self.formamide_conc = 0.8
+        self.formamide_conc = 0.0
         self.divalent = 1.5
         self.dntp = 0.6
         # self.monovalent = 50
@@ -382,9 +382,9 @@ class Primer():
 
 if __name__=="__main__":
     import primer3
-    primer1 = Primer("CGATGTGCTAGTTAGTTCNN","GCTACACGATCAATCAAGTA")
+    primer1 = Primer('TAGCTAGCTAGCTAGCTATGCTATCG','ATCGATCGATCGATCGATACGATAGC')
     print(primer1.Tm)
-    print(primer3.calc_tm("CGATGTGCTAGTTAGTTCNN"))
+    print(primer3.calc_tm("TAGCTAGCTAGCTAGCTATGCTATCG"))
     # primer2 = Primer("GGCCGGAGTAAGCTGACAT")
     # print(primer2.Tm)
     # print(primer3.calc_tm("GGCCGGAGTAAGCTGACAT"))
