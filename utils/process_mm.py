@@ -22,10 +22,10 @@ def fill_N(df:pd.DataFrame) -> dict:
                 max_1 = 0
                 for l in base_li:
                     duplex = f"{i}{j}/{k}{l}"
-                    # dh = df.loc[df[0] == duplex][1]
-                    # dh_data = dh.values[0] if len(dh) else dh_li_m[base2int(duplex[:2])] * -100
-                    dh = df.loc[df[0] == duplex][2]
-                    dh_data = dh.values[0] if len(dh) else ds_li_m[base2int(duplex[:2])] * -0.1
+                    dh = df.loc[df[0] == duplex][1]
+                    dh_data = dh.values[0] if len(dh) else dh_li_m[base2int(duplex[:2])] * -100
+                    # dh = df.loc[df[0] == duplex][2]
+                    # dh_data = dh.values[0] if len(dh) else ds_li_m[base2int(duplex[:2])] * -0.1
                     if dh_data > max_1: max_1 = round(dh_data, 1)
                     dh_dict[duplex] = round(dh_data, 1)
                     # print(f"{duplex}\t{dh_data}")
