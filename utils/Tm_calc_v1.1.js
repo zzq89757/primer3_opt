@@ -3,7 +3,7 @@ class Primer {
     // Tables of nearest-neighbor thermodynamics for DNA bases
 
     // Hybridization match table of dH and dS
-		this.dX_mm = [
+		this.dH_mm = [
       8888.0,8888.0,8888.0,4700.0,8888.0,8888.0, // AA/AA AA/AC AA/AG AA/AT AA/AN AA/A- 
       8888.0,8888.0,8888.0,7600.0,8888.0,8888.0, // AA/CA AA/CC AA/CG AA/CT AA/CN AA/C- 
       8888.0,8888.0,8888.0,3000.0,8888.0,8888.0, // AA/GA AA/GC AA/GG AA/GT AA/GN AA/G- 
@@ -538,7 +538,7 @@ class Primer {
 
 
 // example
-const primer = new Primer('TAGCTAGCTAGCTAGCTATGCTATCG--','ATCGATCGATCGATCGATACGATAGC--')
+const primer = new Primer('CCC-------------------------------ATTGACGTCAAT','GGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTA')
 primer.calcTm()
 console.log(primer.Tm)
 // console.log(primer.dh)
