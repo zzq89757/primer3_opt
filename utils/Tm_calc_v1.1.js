@@ -520,10 +520,16 @@ class Primer {
     }
     for (let i = 1; i < this.seq.length; i++) {
       let twoMerPrimer = this.seq[i - 1] + this.seq[i];
-      const twoMerTmp = this.template.slice(i - 1, i + 1);
-      const GC_num = (twoMerTmp.match(/C/g) || []).length + (twoMerTmp.match(/G/g) || []).length
+      let twoMerTmp = this.template.slice(i - 1, i + 1);
+      let GC_num = 0
       if (twoMerPrimer == '--'){
         twoMerPrimer = Primer.complement(twoMerTmp)
+        GC_num = (twoMerTmp.match(/C/g) || []).length + (twoMerTmp.match(/G/g) || []).length
+        this.gapCorrect -= 2 * (2 - GC_num) + 3 * GC_num
+      }
+      if (twoMerTmp == '--'){
+        twoMerTmp = Primer.complement(twoMerPrimer)
+        GC_num = (twoMerTmp.match(/C/g) || []).length + (twoMerTmp.match(/G/g) || []).length
         this.gapCorrect -= 2 * (2 - GC_num) + 3 * GC_num
       }
       const idx = Primer.duplex2idx(twoMerPrimer + twoMerTmp);
