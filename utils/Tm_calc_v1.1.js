@@ -453,6 +453,7 @@ class Primer {
     this.ds = 0
     this.dh = 0
     this.Tm = 0
+    this.gapCorrect = 0
     this.base = 4000000000
     this.GC_count = 0
 
@@ -518,8 +519,13 @@ class Primer {
       }
     }
     for (let i = 1; i < this.seq.length; i++) {
-      const twoMerPrimer = this.seq[i - 1] + this.seq[i];
+      let twoMerPrimer = this.seq[i - 1] + this.seq[i];
       const twoMerTmp = this.template.slice(i - 1, i + 1);
+      const GC_num = (twoMerTmp.match(/C/g) || []).length + (twoMerTmp.match(/G/g) || []).length
+      if (twoMerPrimer == '--'){
+        twoMerPrimer = Primer.complement(twoMerTmp)
+        this.gapCorrect -= 2 * (2 - GC_num) + 3 * GC_num
+      }
       const idx = Primer.duplex2idx(twoMerPrimer + twoMerTmp);
       this.dh += this.dH_mm[idx];
       this.ds += this.dS_mm[idx];
@@ -532,13 +538,17 @@ class Primer {
     this.Tm = this.dh / (this.ds + 1.987 * Math.log(this.DNA_nM / this.base)) - this.T_KELVIN;
     this.Tm -= this.dmso_conc * this.dmso_fact;
     this.Tm += (0.453 * this.GC_count / this.seq.length - 2.88) * this.formamide_conc;
+    this.Tm += this.gapCorrect
   }
 
 }
 
 
 // example
-const primer = new Primer('CCC-------------------------------ATTGACGTCAAT','GGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTA')
+const primer0 = new Primer('CCC-------------------------------ATTGACGTCAAT','GGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTA')
+primer0.calcTm()
+console.log(primer0.Tm)
+const primer = new Primer('TAAACTGCC-----GGCAGTACATC','ATTTGACGGGTGAACCGTCATGTAG')
 primer.calcTm()
 console.log(primer.Tm)
 // console.log(primer.dh)

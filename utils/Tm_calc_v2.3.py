@@ -459,6 +459,7 @@ class Primer():
         self.ds = 0
         self.dh = 0
         self.Tm = 0
+        self.gap_correct = 0
         self.base = 4000000000
         self.GC_count = 0
         
@@ -538,6 +539,10 @@ class Primer():
             if  i == 0 :continue
             two_mer_primer:str = self.seq[i-1] + s
             two_mer_tmp:str = self.template[i-1:i+1]
+            gc_count = two_mer_tmp.count('C') + two_mer_tmp.count('G')
+            if two_mer_primer == '--':
+                two_mer_primer = Primer.complement(two_mer_tmp)
+                self.gap_correct -= 2 * (2 - gc_count) + 3 * gc_count
             # convert duplex to digital code
             idx  = Primer.duplex2idx(two_mer_primer + two_mer_tmp)
             # computation
@@ -555,18 +560,23 @@ class Primer():
         self.GC_count = 0 if self.formamide_conc == 0.0 else str.count(self.seq,"C") + str.count(self.seq,"G")
         self.K_mM += self.divalent_to_monovalent()
         self.ds = self.ds + 0.368 * (len(self.seq) - 1) * log(self.K_mM / 1000.0 )
-        print(self.ds)
+        # print(self.dh)
+        # print(self.ds)
         # self.ds = 1000
+        # print(f"1.987 * log(self.DNA_nM / self.base) : {1.987 * log(self.DNA_nM / self.base)}")
+        # print(f"self.dh / (self.ds + 1.987 * log(self.DNA_nM / self.base)) : {self.dh / (self.ds + 1.987 * log(self.DNA_nM / self.base))}")
+        # Tm ~= (dh / (ds - 36)) - 273
         self.Tm = self.dh / (self.ds + 1.987 * log(self.DNA_nM / self.base)) - self.T_KELVIN
         self.Tm -= self.dmso_conc * self.dmso_fact
         self.Tm += (0.453 * self.GC_count / len(self.seq) - 2.88) * self.formamide_conc
+        self.Tm += self.gap_correct
 
 
 if __name__=="__main__":
     import primer3
-    primer1 = Primer('--------------------------------','ATAACCGCAATGATACCCTTGTATGCAGTAA-')
+    primer1 = Primer('CCC-------------------------------ATTGACGTCAAT','GGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTA')
     print(primer1.Tm)
-    primer1 = Primer('TATTGGCGTTACTATGGGAACATACGTCATT','ATAACCGCAATGATACCCTTGTATGCAGTAA')
+    primer1 = Primer('TAAACTGCC-----GGCAGTACATC','ATTTGACGGGTGAACCGTCATGTAG')
     print(primer1.Tm)
     # print(primer1.dh)
     # print(primer1.ds)
