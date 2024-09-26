@@ -556,11 +556,11 @@ class Primer {
 
 
 // example
-// const primer0 = new Primer('CCC-------------------------------ATTGACGTCAAT','GGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTA')
-// primer0.calcTm()
-// console.log(primer0.Tm)
-// const primer = new Primer('TGTAT----CAT-ATGCCAAGTACGCCC----CCT--ATTGACGTCA','ACATGACCCGTATTACGGTCCGCCCGGTAAATGGCAGTAACTGCAGT')
-const primer = new Primer('T-TACTGGGCATAATGCCAGGCGGGCCATTTACCGTCATTGACGTCA', 'ACATGACCCGTATTACGGTCCGCCCGGTAAATGGCAGTAACTGCAGT')
+const primer0 = new Primer('CCC-------------------------------ATTGACGTCAAT','GGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTA')
+primer0.calcTm()
+console.log(primer0.Tm)
+const primer = new Primer('TAAACTGCC-----GGCAGTACATC','ATTTGACGGGTGAACCGTCATGTAG')
+// const primer = new Primer('T-TACTGGGCATAATGCCAGGCGGGCCATTTACCGTCATTGACGTCA', 'ACATGACCCGTATTACGGTCCGCCCGGTAAATGGCAGTAACTGCAGT')
 primer.calcTm()
 console.log(primer.Tm)
 // console.log(primer.dh)

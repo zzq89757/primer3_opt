@@ -574,12 +574,16 @@ class Primer():
 
 if __name__=="__main__":
     import primer3
-    primer1 = Primer('CCC-------------------------------ATTGACGTCAAT','GGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTA')
+    primer1 = Primer('CCC-------------------------------ATTGACGTCAAT',
+                     'GGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTA')
     print(primer1.Tm)
-    primer1 = Primer('TAAACTGCC-----GGCAGTACATC','ATTTGACGGGTGAACCGTCATGTAG')
+    print(primer1.dh)
+    print(primer1.ds)
+    primer1 = Primer('TAAACTGCC-----GGCAGTACATC',
+                     'ATTTGACGGGTGAACCGTCATGTAG')
     print(primer1.Tm)
-    # print(primer1.dh)
-    # print(primer1.ds)
+    print(primer1.dh)
+    print(primer1.ds)
     # print(primer3.calc_tm("TAGCTAGCTAGCTAGCTATGCTATCG"))
     # primer2 = Primer("GGCCGGAGTAAGCTGACAT")
     # print(primer2.Tm)
