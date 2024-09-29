@@ -551,7 +551,7 @@ class Primer {
       this.Tm -= this.dmso_conc * this.dmso_fact;
       this.Tm += (0.453 * this.GC_count / this.seq.length - 2.88) * this.formamide_conc;
     } else {
-      this.Tm = 81.5 - dmsoConc * dmsoFact + (0.453 * gcCount / seqLen - 2.88) * formamideConc + 16.6 * Math.log10(saltConc / 1000) + 41.0 * (gcCount / seqLen) - 600.0 / seqLen
+      this.Tm = 81.5 - this.K_mM * this.dmsoFact + (0.453 * this.GC_count / this.seqLen - 2.88) * this.formamide_conc + 16.6 * Math.log10(this.K_mM / 1000) + 41.0 * (this.GC_count / this.seqLen) - 600.0 / this.seqLen
     }
     // Gap correction
     this.Tm += this.gapCorrect
