@@ -37,8 +37,7 @@ def cigar_test(reference_start: int, cigar_str: str) -> defaultdict:
         # I not add pos, D add
         if tag != "I":
             current_pos += int(region_length)
-        
-        if tag == "I":
+        else:
             insertion_dict[current_pos] = region_length
     print(insertion_dict)
         
