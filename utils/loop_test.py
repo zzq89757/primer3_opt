@@ -25,7 +25,9 @@ def cigar_test(reference_start: int, cigar_str: str) -> defaultdict:
     # extract to a indival function:has_insertion
     if cigar_str.find("I") == -1:
         return insertion_dict
-    # only preverse cigar_str until last I
+    # only preserve cigar_str until last I
+    suffix = cigar_str.rpartition("I")[2]
+    cigar_str = cigar_str.removesuffix(suffix)
     cigar_li = re.split(r"(\d+)", cigar_str)
     cigar_li = list(filter(None, cigar_li))
     current_pos = reference_start
@@ -34,13 +36,14 @@ def cigar_test(reference_start: int, cigar_str: str) -> defaultdict:
         tag = cigar_li[idx + 1]
         # I not add pos, D add
         if tag != "I":
-            current_pos += region_length
+            current_pos += int(region_length)
         
         if tag == "I":
-            insertion_dict[current_pos] = str(region_length)
+            insertion_dict[current_pos] = region_length
+    print(insertion_dict)
         
 
 
 if __name__ == "__main__":
     # re_test("506^CA9C17A0C0A18^G9^C11")
-    cigar_test(100, "89M1I11M38S")
+    cigar_test(100, "89M1I11M38S22M5I30M")
