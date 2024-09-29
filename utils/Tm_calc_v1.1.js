@@ -503,6 +503,7 @@ class Primer {
   }
 
   calcTm() {
+
     const sym = this.symmetry();
     if (sym) {
       this.ds -= 1.4;
@@ -545,9 +546,13 @@ class Primer {
     // Salt correction
     this.K_mM += this.divalentToMonovalent();
     this.ds += 0.368 * (this.seq.length - 1) * Math.log(this.K_mM / 1000.0);
-    this.Tm = this.dh / (this.ds + 1.987 * Math.log(this.DNA_nM / this.base)) - this.T_KELVIN;
-    this.Tm -= this.dmso_conc * this.dmso_fact;
-    this.Tm += (0.453 * this.GC_count / this.seq.length - 2.88) * this.formamide_conc;
+    if (this.seq.length < 60) {
+      this.Tm = this.dh / (this.ds + 1.987 * Math.log(this.DNA_nM / this.base)) - this.T_KELVIN;
+      this.Tm -= this.dmso_conc * this.dmso_fact;
+      this.Tm += (0.453 * this.GC_count / this.seq.length - 2.88) * this.formamide_conc;
+    } else {
+      this.Tm = 81.5 - dmsoConc * dmsoFact + (0.453 * gcCount / seqLen - 2.88) * formamideConc + 16.6 * Math.log10(saltConc / 1000) + 41.0 * (gcCount / seqLen) - 600.0 / seqLen
+    }
     // Gap correction
     this.Tm += this.gapCorrect
   }
@@ -556,10 +561,10 @@ class Primer {
 
 
 // example
-const primer0 = new Primer('CCC-------------------------------ATTGACGTCAAT','GGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTA')
+const primer0 = new Primer('CCC-------------------------------ATTGACGTCAAT', 'GGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTA')
 primer0.calcTm()
 console.log(primer0.Tm)
-const primer = new Primer('TAAACTGCC-----GGCAGTACATC','ATTTGACGGGTGAACCGTCATGTAG')
+const primer = new Primer('TAAACTGCC-----GGCAGTACATC', 'ATTTGACGGGTGAACCGTCATGTAG')
 // const primer = new Primer('T-TACTGGGCATAATGCCAGGCGGGCCATTTACCGTCATTGACGTCA', 'ACATGACCCGTATTACGGTCCGCCCGGTAAATGGCAGTAACTGCAGT')
 primer.calcTm()
 console.log(primer.Tm)
