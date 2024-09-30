@@ -2,12 +2,16 @@ from collections import defaultdict
 
 
 def loop_detective(duplex_str: str) -> None:
+    """
+    检测分子杂交(duplex)中的loop结构(internal loop和bulge loop)
+
+    """
     seq1, seq2 = duplex_str.split("\n")
     print(seq1)
     print(seq2)
 
 
-def re_test(md_tag: str) -> list[str]:
+def md_tag_detective(md_tag: str) -> list[str]:
     """
     md标签反应参考上的碱基情况
     当出现^时 read相较于参考有缺失 直接增加^后的碱基数 保证位置不偏移
@@ -22,7 +26,7 @@ def re_test(md_tag: str) -> list[str]:
     print(md_tag_li)
 
 
-def cigar_test(reference_start: int, cigar_str: str) -> defaultdict:
+def cigar_detective(reference_start: int, cigar_str: str) -> defaultdict:
     import re
 
     insertion_dict = defaultdict()
