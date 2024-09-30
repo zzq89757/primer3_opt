@@ -1,10 +1,10 @@
 from collections import defaultdict
 
+
 def loop_detective(duplex_str: str) -> None:
     seq1, seq2 = duplex_str.split("\n")
     print(seq1)
     print(seq2)
-    
 
 
 def re_test(md_tag: str) -> list[str]:
@@ -24,6 +24,7 @@ def re_test(md_tag: str) -> list[str]:
 
 def cigar_test(reference_start: int, cigar_str: str) -> defaultdict:
     import re
+
     insertion_dict = defaultdict()
     # extract to a indival function:has_insertion
     if cigar_str.find("I") == -1:
@@ -44,9 +45,8 @@ def cigar_test(reference_start: int, cigar_str: str) -> defaultdict:
             insertion_dict[current_pos] = region_length
     print(insertion_dict)
 
-def snp_check(reference_start: int, cigar_str: str, md_tag: str|None) -> None:
-    ...
-        
+
+def snp_check(reference_start: int, cigar_str: str, md_tag: str | None) -> None: ...
 
 
 if __name__ == "__main__":
