@@ -40,6 +40,9 @@ def cigar_test(reference_start: int, cigar_str: str) -> defaultdict:
         else:
             insertion_dict[current_pos] = region_length
     print(insertion_dict)
+
+def snp_check(reference_start: int, cigar_str: str, md_tag: str|None) -> None:
+    ...
         
 
 
