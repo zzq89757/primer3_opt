@@ -1,7 +1,10 @@
 from collections import defaultdict
 
 def loop_detective(duplex_str: str) -> None:
-    seq1, seq2 = duplex_str.split()
+    seq1, seq2 = duplex_str.split("\n")
+    print(seq1)
+    print(seq2)
+    
 
 
 def re_test(md_tag: str) -> list[str]:
@@ -48,4 +51,5 @@ def snp_check(reference_start: int, cigar_str: str, md_tag: str|None) -> None:
 
 if __name__ == "__main__":
     # re_test("506^CA9C17A0C0A18^G9^C11")
-    cigar_test(100, "89M1I11M38S22M5I30M")
+    # cigar_test(100, "89M1I11M38S22M5I30M")
+    loop_detective("GCTAGCATCGTAGCT\nCGTAGCTGATGCGTA")
