@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, deque
 
 
 def loop_detective(duplex_str: str) -> None:
@@ -6,9 +6,16 @@ def loop_detective(duplex_str: str) -> None:
     检测分子杂交(duplex)中的loop结构(internal loop和bulge loop)
 
     """
+    gap_index_li = deque()
     seq1, seq2 = duplex_str.split("\n")
     # record pairs and gaps,then recogonize bulge loop and internal loop
-    
+    for idx in range(len(seq1)):
+        # gap found, record index
+        if seq1[idx] == '-' or seq2[idx] == '-':
+            gap_index_li.append(idx)
+        
+    # cycle 2, calc 
+            
 
 
 def md_tag_detective(md_tag: str) -> list[str]:
