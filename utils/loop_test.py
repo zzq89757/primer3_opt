@@ -33,8 +33,46 @@ def loop_detective(duplex_str: str) -> defaultdict:
 
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
-    ii_dh = -7.2 # intermolecular initiation dh
-    ii_dg = -1.0 # intermolecular initiation dg
+    ii_dh = -7.2  # intermolecular initiation dh
+    ii_dg = -1.0  # intermolecular initiation dg
+    # bulge loop dh dg
+    bulge_loop_dict = defaultdict(deque)
+    bulge_loop_dict["dh"] = deque([18.9, -0.6, -2.3] + [-14.1] * 27)
+    bulge_loop_dict["ds"] = deque(
+        [
+            2.9,
+            2.3,
+            2.5,
+            2.7,
+            3.0,
+            3.2,
+            3.4,
+            3.5,
+            3.6,
+            3.7,
+            3.9,
+            3.9,
+            4.0,
+            4.1,
+            4.2,
+            4.3,
+            4.3,
+            4.4,
+            4.4,
+            4.5,
+            4.5,
+            4.6,
+            4.6,
+            4.7,
+            4.7,
+            4.7,
+            4.8,
+            4.9,
+            4.9,
+            4.9,
+        ]
+    )
+    
     seq1, seq2 = duplex_str.split("\n")
     for i in range(len(seq1)):
         ...
@@ -98,4 +136,5 @@ def snp_check(reference_start: int, cigar_str: str, md_tag: str | None) -> None:
 if __name__ == "__main__":
     # re_test("506^CA9C17A0C0A18^G9^C11")
     # cigar_test(100, "89M1I11M38S22M5I30M")
-    loop_detective("GCTAGCATCGTA--GCT\nCGTAGCTGATGCTTGTA")
+    loop_region_dict = loop_detective("GCTAGCATCGTA--GCT\nCGTAGCTGATGCTTGTA")
+    calc_Tm_by_NN("GCTAGCATCGTA--GCT\nCGTAGCTGATGCTTGTA", loop_region_dict)
