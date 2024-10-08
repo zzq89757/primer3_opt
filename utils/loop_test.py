@@ -32,13 +32,23 @@ def loop_detective(duplex_str: str) -> defaultdict:
     return loop_region_dict
 
 
+def int_loop_type():
+    """对intloop的进行分型"""
+    ...
+    
+
+def bulge_dg():
+    """计算不同长度bulge的能量值"""
+    ...
+
+
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     ii_dh = -7.2  # intermolecular initiation dh
     ii_dg = -1.0  # intermolecular initiation dg
     # bulge loop dh dg
     bulge_loop_dict = defaultdict(deque)
     bulge_loop_dict["dh"] = deque([18.9, -0.6, -2.3] + [-14.1] * 27)
-    bulge_loop_dict["ds"] = deque(
+    bulge_loop_dict["dg"] = deque(
         [
             2.9,
             2.3,
