@@ -33,12 +33,12 @@ def loop_detective(duplex_str: str) -> defaultdict:
 
 
 def int_loop_type():
-    """对intloop的进行分型"""
+    """对intloop进行分型"""
     ...
     
 
 def bulge_dg():
-    """计算不同长度bulge的能量值"""
+    """计算不同长度bulge的总能量值"""
     ...
 
 
