@@ -12,7 +12,7 @@ def loop_detective(duplex_str: str) -> defaultdict:
     ord_sum_li = [ord(x) + ord(y) for x, y in zip(seq1, seq2)]
     # record mismatch and gaps,then recogonize bulge loop and internal loop
     loop_region_dict = defaultdict(
-        list
+        deque
     )  # region_pos: start and end index, region_type: 0 for bulge,1 for int loop
     region_type_flag = 0  # 0 for bulge,1 for int loop
     flag = 0  # switch to record region start and end index
