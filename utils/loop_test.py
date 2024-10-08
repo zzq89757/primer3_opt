@@ -33,6 +33,8 @@ def loop_detective(duplex_str: str) -> defaultdict:
 
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
+    ii_dh = -7.2 # intermolecular initiation dh
+    ii_dg = -1.0 # intermolecular initiation ds
     seq1, seq2 = duplex_str.split("\n")
     for i in range(len(seq1)):
         ...
