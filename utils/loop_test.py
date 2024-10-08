@@ -7,8 +7,8 @@ def loop_detective(duplex_str: str) -> None:
 
     """
     seq1, seq2 = duplex_str.split("\n")
-    print(seq1)
-    print(seq2)
+    # record pairs and gaps,then recogonize bulge loop and internal loop
+    
 
 
 def md_tag_detective(md_tag: str) -> list[str]:
