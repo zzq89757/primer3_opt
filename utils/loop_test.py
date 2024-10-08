@@ -1,50 +1,41 @@
 from collections import defaultdict, deque
 
 
-def loop_detective(duplex_str: str) -> None:
+def loop_detective(duplex_str: str) -> defaultdict:
     """
     检测分子杂交(duplex)中的loop结构(internal loop 和 bulge loop)
 
     """
-    gap_index_li = deque()
     match_asc_li = [149, 138]  # ord sum is  AT: 65 + 84 = 149   CG: 67 + 71 = 138
     gap_asc_li = [90, 129, 116, 112, 110]
-    bulge_start_flag = 0
-    intloop_start_flag = 0
     seq1, seq2 = duplex_str.split("\n")
-    # record pairs and gaps,then recogonize bulge loop and internal loop
-    for idx in range(len(seq1)):
-        # gap found, record index
-        if seq1[idx] == "-" or seq2[idx] == "-":
-            gap_index_li.append(idx)
-    region_li = deque()  # record region start index and end index
-    region_type = 0  # 0 for bulge,1 for int loop
-    for idx in range(len(seq1)):
-        ord_sum = ord(seq1[idx]) + ord(seq2[idx])
-        if ord_sum not in match_asc_li:  # gap or mismatch start
-            if ord_sum in gap_asc_li:  # gap
-                # record region start
-                region_li.append(idx)
-
     ord_sum_li = [ord(x) + ord(y) for x, y in zip(seq1, seq2)]
-    region_li = deque()  # region start and end index
+    # record mismatch and gaps,then recogonize bulge loop and internal loop
+    loop_region_dict = defaultdict(
+        list
+    )  # region_pos: start and end index, region_type: 0 for bulge,1 for int loop
     region_type_flag = 0  # 0 for bulge,1 for int loop
-    region_type_li = deque()  # storage region_type_flag
     flag = 0  # switch to record region start and end index
     print(ord_sum_li)
     for i, v in enumerate(ord_sum_li):
         if v not in match_asc_li and not flag:
-            region_li.append(i)
+            loop_region_dict["region_pos"].append(i)
             flag = 1
         if v not in gap_asc_li and v not in match_asc_li:
             region_type_flag = 1
         if v in match_asc_li and flag:
-            region_li.append(i - 1)
-            region_type_li.append(region_type_flag)
+            loop_region_dict["region_pos"].append(i - 1)
+            loop_region_dict["region_type"].append(region_type_flag)
             flag = 0
             region_type_flag = 0
-    print(region_li)
-    print(region_type_li)
+    print(loop_region_dict)
+    return loop_region_dict
+
+
+def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
+    seq1, seq2 = duplex_str.split("\n")
+    for i in range(len(seq1)):
+        ...
 
 
 def sum_test() -> None:
