@@ -72,7 +72,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             4.9,
         ]
     )
-    
+
     seq1, seq2 = duplex_str.split("\n")
     for i in range(len(seq1)):
         ...
