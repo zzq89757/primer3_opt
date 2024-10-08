@@ -6,9 +6,9 @@ def loop_detective(duplex_str: str) -> defaultdict:
     检测分子杂交(duplex)中的loop结构(internal loop 和 bulge loop)
 
     """
+    seq1, seq2 = duplex_str.split("\n")
     match_asc_li = [149, 138]  # ord sum is  AT: 65 + 84 = 149   CG: 67 + 71 = 138
     gap_asc_li = [90, 129, 116, 112, 110]
-    seq1, seq2 = duplex_str.split("\n")
     ord_sum_li = [ord(x) + ord(y) for x, y in zip(seq1, seq2)]
     # record mismatch and gaps,then recogonize bulge loop and internal loop
     loop_region_dict = defaultdict(
