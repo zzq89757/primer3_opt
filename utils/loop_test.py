@@ -150,10 +150,24 @@ def bulge_energy(bulge_length: int) -> list:
         bulge_loop_dict["dg"][bulge_length - 1],
     ]
 
-
-def int_loop_energy() -> list:
-    """对intloop进行分型并计算能量"""
+def loop_asymmetry_energy():
     ...
+
+
+
+def int_loop_energy(segment1: str, segment2: str) -> list:
+    """对intloop进行分型并计算能量"""
+    first_loop_length = len(segment1) - segment1.count("-")
+    second_loop_length = len(segment2) - segment2.count("-")
+    
+    # 1 * n 
+    if first_loop_length == 1 or second_loop_length == 1:
+        loop_sum = first_loop_length + second_loop_length
+        # if n > 2,asymmetry consider 
+        loop_diff_abs = abs(first_loop_length - second_loop_length)
+        
+        
+    
 
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
@@ -188,9 +202,9 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
         else:
             loop_idx = region_idx // 2
             loop_type = region_type_li[loop_idx]
+            loop_length = end - start + 1
             if not loop_type:  # bulge
-                bulge_length = end - start + 1
-                bulge_dh, bulge_dg = bulge_energy(bulge_length)
+                bulge_dh, bulge_dg = bulge_energy(loop_length)
                 dH += bulge_dh
                 dG += bulge_dg
                 print(f"bulge {start} -> {end}")
