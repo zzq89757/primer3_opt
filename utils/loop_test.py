@@ -32,7 +32,7 @@ def loop_detective(duplex_str: str) -> defaultdict:
     return loop_region_dict
 
 
-def stack_energy(segment1: str, segment2: str, stack_dict: defaultdict) -> list:
+def stack_energy(segment1: str, segment2: str) -> list:
     """近邻法计算stack的总能量值"""
 
 
@@ -110,7 +110,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             stack_length = end - start + 1
             # if stack length > 1, participate energy calc
             if stack_length > 1:
-                stack_dh, stack_dg = stack_energy(segment1, segment2, stack_dict)
+                stack_dh, stack_dg = stack_energy(segment1, segment2)
                 dH += stack_dh
                 dG += stack_dg
             print(f"stack {start}->{end}")
