@@ -37,7 +37,10 @@ def int_loop_type():
     ...
 
 
-def delta_bulge():
+def delta_stack(segment: str, stack_dict: defaultdict, thermodynamics_params: str): ...
+
+
+def delta_bulge(bulge_length: int, thermodynamics_params: str):
     """计算不同长度bulge的总能量值"""
     # bulge loop dh dg
     bulge_loop_dict = defaultdict(deque)
@@ -77,8 +80,7 @@ def delta_bulge():
         ]
     )
 
-
-def delta_stack(segment: str, stack_dict: defaultdict, thermodynamics_params: str): ...
+    return bulge_loop_dict[thermodynamics_params][bulge_length - 1]
 
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
@@ -111,6 +113,9 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             loop_type = region_type_li[loop_idx]
             # bulge
             if not loop_type:
+                bulge_length = end - start + 1
+                dH += delta_bulge(bulge_length, "dh")
+                dG += delta_bulge(bulge_length, "dg")
                 print(f"bulge {start} -> {end}")
             else:  # int loop
                 print(f"intloop {start} -> {end}")
