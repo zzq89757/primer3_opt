@@ -32,8 +32,8 @@ def loop_detective(duplex_str: str) -> defaultdict:
     return loop_region_dict
 
 
-def int_loop_type():
-    """对intloop进行分型"""
+def int_loop_energy():
+    """对intloop进行分型并计算能量"""
     ...
 
 
