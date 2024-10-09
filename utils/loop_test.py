@@ -156,15 +156,37 @@ def loop_asymmetry_energy(): ...
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
     """对intloop进行分型并计算能量"""
+    int_loop_dh = 0
+    int_loop_ds = 0
+    int_loop_dg = 0
+
+    asymmetry_dg = 0.4
+    asymmetry_dh = 0
+    asymmetry_ds = ((asymmetry_dh - asymmetry_dg) / 310.15) * 1000
+
     first_loop_length = len(segment1) - segment1.count("-")
     second_loop_length = len(segment2) - segment2.count("-")
-
+    loop_sum = first_loop_length + second_loop_length
+    is_symmetric = loop_sum <= 4 and max(first_loop_length, second_loop_length) < 3
     # 1 * n
     if min(first_loop_length, second_loop_length) == 1:
-        loop_sum = first_loop_length + second_loop_length
-        # if n > 2,asymmetry consider
-        loop_diff_abs = abs(first_loop_length - second_loop_length)
-
+        # 1 * 1
+        if loop_sum == 2:
+            ...
+        # 1 * 2
+        elif loop_sum == 3:
+            ...
+        # n > 2, asymmetry consider
+        else:
+            loop_diff_abs = abs(first_loop_length - second_loop_length)
+            int_loop_dg += asymmetry_dg * loop_diff_abs
+    else:
+        # 2 * 2
+        if loop_sum == 4:
+            ...
+        # n1 * n2 (min(n1, n2) >= 2)
+        else:
+            ...
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     dS = 0
