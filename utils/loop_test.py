@@ -103,16 +103,17 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
         if region_idx % 2 == 0 or region_idx == len(region_pos_li):
             start += 1
             end -= 1
-            # for in start to end, do something
-            dH += delta_stack(segment, stack_dict, "dh")
-            dG += delta_stack(segment, stack_dict, "dg")
+            stack_length = end - start + 1
+            # if stack length > 1, participate energy calc
+            if stack_length > 1:
+                dH += delta_stack(segment, stack_dict, "dh")
+                dG += delta_stack(segment, stack_dict, "dg")
             print(f"stack {start}->{end}")
         # loop
         else:
             loop_idx = region_idx // 2
             loop_type = region_type_li[loop_idx]
-            # bulge
-            if not loop_type:
+            if not loop_type:  # bulge
                 bulge_length = end - start + 1
                 dH += delta_bulge(bulge_length, "dh")
                 dG += delta_bulge(bulge_length, "dg")
