@@ -35,7 +35,7 @@ def loop_detective(duplex_str: str) -> defaultdict:
 def int_loop_type():
     """对intloop进行分型"""
     ...
-    
+
 
 def bulge_dg():
     """计算不同长度bulge的总能量值"""
@@ -84,8 +84,32 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     )
 
     seq1, seq2 = duplex_str.split("\n")
-    for i in range(len(seq1)):
-        ...
+    region_pos_li = loop_region_dict["region_pos"]
+    region_type_li = loop_region_dict["region_type"]
+    region_idx = 0
+    while region_idx <= len(region_pos_li):
+        start = region_pos_li[region_idx - 1] if region_idx != 0 else 0
+        end = (
+            region_pos_li[region_idx]
+            if region_idx != len(region_pos_li)
+            else len(seq1) - 1
+        )
+        # stack region
+        if region_idx % 2 == 0 or region_idx == len(region_pos_li):
+            # for in start to end, do something
+            
+            print(f"stack {start}->{end}")
+        # loop region
+        else:
+            loop_idx = region_idx // 2
+            loop_type = region_type_li[loop_idx]
+            # bulge
+            if not loop_type:
+                print(f"bulge {start} -> {end}")
+            else:  # int loop
+                print(f"intloop {start} -> {end}")
+
+        region_idx += 1
 
 
 def sum_test() -> None:
