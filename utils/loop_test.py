@@ -32,15 +32,11 @@ def loop_detective(duplex_str: str) -> defaultdict:
     return loop_region_dict
 
 
-def int_loop_energy():
-    """对intloop进行分型并计算能量"""
-    ...
+def stack_energy(segment1: str, segment2: str, stack_dict: defaultdict):
+    """近邻法计算stack的总能量值"""
 
 
-def delta_stack(segment: str, stack_dict: defaultdict, thermodynamics_params: str): ...
-
-
-def delta_bulge(bulge_length: int, thermodynamics_params: str):
+def bulge_energy(bulge_length: int) -> list:
     """计算不同长度bulge的总能量值"""
     # bulge loop dh dg
     bulge_loop_dict = defaultdict(deque)
@@ -80,7 +76,15 @@ def delta_bulge(bulge_length: int, thermodynamics_params: str):
         ]
     )
 
-    return bulge_loop_dict[thermodynamics_params][bulge_length - 1]
+    return [
+        bulge_loop_dict["dh"][bulge_length - 1],
+        bulge_loop_dict["dg"][bulge_length - 1],
+    ]
+
+
+def int_loop_energy():
+    """对intloop进行分型并计算能量"""
+    ...
 
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
@@ -106,8 +110,9 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             stack_length = end - start + 1
             # if stack length > 1, participate energy calc
             if stack_length > 1:
-                dH += delta_stack(segment, stack_dict, "dh")
-                dG += delta_stack(segment, stack_dict, "dg")
+                stack_dh, stack_dg = stack_energy(segment1, segment2, stack_dict)
+                dH += stack_dh
+                dG += stack_dg
             print(f"stack {start}->{end}")
         # loop
         else:
@@ -115,8 +120,9 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             loop_type = region_type_li[loop_idx]
             if not loop_type:  # bulge
                 bulge_length = end - start + 1
-                dH += delta_bulge(bulge_length, "dh")
-                dG += delta_bulge(bulge_length, "dg")
+                bulge_dh, bulge_dg = bulge_energy(bulge_length)
+                dH += bulge_dh
+                dG += bulge_dg
                 print(f"bulge {start} -> {end}")
             else:  # int loop
                 print(f"intloop {start} -> {end}")
