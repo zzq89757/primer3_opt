@@ -32,7 +32,7 @@ def loop_detective(duplex_str: str) -> defaultdict:
     return loop_region_dict
 
 
-def stack_energy(segment1: str, segment2: str, stack_dict: defaultdict):
+def stack_energy(segment1: str, segment2: str, stack_dict: defaultdict) -> list:
     """近邻法计算stack的总能量值"""
 
 
@@ -82,7 +82,7 @@ def bulge_energy(bulge_length: int) -> list:
     ]
 
 
-def int_loop_energy():
+def int_loop_energy() -> list:
     """对intloop进行分型并计算能量"""
     ...
 
