@@ -160,7 +160,7 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
     second_loop_length = len(segment2) - segment2.count("-")
 
     # 1 * n
-    if first_loop_length == 1 or second_loop_length == 1:
+    if min(first_loop_length, second_loop_length) == 1:
         loop_sum = first_loop_length + second_loop_length
         # if n > 2,asymmetry consider
         loop_diff_abs = abs(first_loop_length - second_loop_length)
