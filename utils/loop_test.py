@@ -97,7 +97,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
         end = (
             region_pos_li[region_idx] if region_idx != len(region_pos_li) else len(seq1)
         )
-        # stack region
+        # stack
         if region_idx % 2 == 0 or region_idx == len(region_pos_li):
             start += 1
             end -= 1
@@ -105,7 +105,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             dH += delta_stack(segment, stack_dict, "dh")
             dG += delta_stack(segment, stack_dict, "dg")
             print(f"stack {start}->{end}")
-        # loop region
+        # loop
         else:
             loop_idx = region_idx // 2
             loop_type = region_type_li[loop_idx]
