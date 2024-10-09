@@ -151,7 +151,8 @@ def bulge_energy(bulge_length: int) -> list:
     ]
 
 
-def loop_asymmetry_energy(): ...
+def loop_asymmetry_energy(): 
+    ...
 
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
@@ -187,6 +188,7 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
         # n1 * n2 (min(n1, n2) >= 2)
         else:
             ...
+
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     dS = 0
@@ -230,7 +232,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
                 print(f"intloop {start} -> {end}")
 
         region_idx += 1
-        
+
 
 if __name__ == "__main__":
     loop_region_dict = loop_detective("GCTAGCATCGTA--GCTCGA\nCGTAGCTGATGCTTGTAGCT")
