@@ -32,8 +32,77 @@ def loop_detective(duplex_str: str) -> defaultdict:
     return loop_region_dict
 
 
-def stack_energy(segment1: str, segment2: str) -> list:
+def base2int(base: str) -> int:
+    trantab = str.maketrans("ACGTN", "01234")
+    return int(base.upper().translate(trantab), base=5)
+
+
+def stack_energy(segment: str) -> list:
     """近邻法计算stack的总能量值"""
+    delta_h = [
+        79,
+        84,
+        78,
+        72,
+        72,
+        85,
+        80,
+        106,
+        78,
+        78,
+        82,
+        98,
+        80,
+        84,
+        80,
+        72,
+        82,
+        85,
+        79,
+        72,
+        72,
+        80,
+        78,
+        72,
+        72,
+    ]
+    delta_s = [
+        222,
+        224,
+        210,
+        204,
+        224,
+        227,
+        199,
+        272,
+        210,
+        272,
+        222,
+        244,
+        199,
+        224,
+        244,
+        213,
+        222,
+        227,
+        222,
+        227,
+        168,
+        210,
+        220,
+        215,
+        220,
+    ]
+    delta_g = [(x - 310.15 * y) / 1000 for x, y in zip(delta_h, delta_s)]
+    stack_dh = 0
+    stack_dg = 0
+    # print(delta_g)
+    for i in range(len(segment) - 1):
+        two_mer = segment[i] + segment[i + 1]
+        d_index = base2int(two_mer)
+        stack_dg += delta_g[d_index]
+        stack_dh += delta_h[d_index]
+    return [stack_dh, stack_dg]
 
 
 def bulge_energy(bulge_length: int) -> list:
@@ -110,7 +179,8 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             stack_length = end - start + 1
             # if stack length > 1, participate energy calc
             if stack_length > 1:
-                stack_dh, stack_dg = stack_energy(segment1, segment2)
+                segment = seq1[start : end + 1]
+                stack_dh, stack_dg = stack_energy(segment)
                 dH += stack_dh
                 dG += stack_dg
             print(f"stack {start}->{end}")
