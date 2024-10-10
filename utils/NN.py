@@ -7,7 +7,8 @@ def loop_detective(duplex_str: str) -> defaultdict:
 
     """
     seq1, seq2 = duplex_str.split("\n")
-    match_asc_li = [149, 138]  # ord sum is  AT: 65 + 84 = 149   CG: 67 + 71 = 138
+    # ord sum is  AT: 65 + 84 = 149   CG: 67 + 71 = 138
+    match_asc_li = [149, 138]
     gap_asc_li = [90, 129, 116, 112, 110]
     ord_sum_li = [ord(x) + ord(y) for x, y in zip(seq1, seq2)]
     # record mismatch and gaps,then recogonize bulge loop and internal loop
@@ -151,8 +152,21 @@ def bulge_energy(bulge_length: int) -> list:
     ]
 
 
-def loop_asymmetry_energy(): 
-    ...
+def symmetric_int_loop_energy(): ...
+
+
+def asymmetry_correct_energy(): ...
+
+
+def asymmetric_int_loop_initiation_energy(): ...
+
+
+def asymmetric_int_loop_mismatch_energy(): ...
+
+
+def asymmetric_int_loop_energy(): ...
+
+
 
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
@@ -188,6 +202,13 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
         # n1 * n2 (min(n1, n2) >= 2)
         else:
             ...
+
+    # 1×1, 1×2, 2×2 Internal Loops
+    if is_symmetric:
+        ...
+    # Other Internal Loops
+    else:
+        ...
 
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
