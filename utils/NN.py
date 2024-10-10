@@ -262,9 +262,9 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
                 dG += bulge_dg
                 print(f"bulge {start} -> {end}")
             else:  # int loop
-                bulge_dh, bulge_dg = int_loop_energy()
-                dH += bulge_dh
-                dG += bulge_dg
+                int_loop_dh, int_loop_dg = int_loop_energy()
+                dH += int_loop_dh
+                dG += int_loop_dg
                 print(f"intloop {start} -> {end}")
 
         region_idx += 1
