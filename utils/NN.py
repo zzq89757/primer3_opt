@@ -156,8 +156,11 @@ def bulge_energy(bulge_length: int) -> list:
 def symmetric_int_loop_energy(): ...
 
 
-def asymmetry_correct_energy(): ...
-
+def asymmetry_correct_energy():
+    asymmetry_dg = 0.4
+    asymmetry_dh = 0
+    asymmetry_ds = ((asymmetry_dh - asymmetry_dg) / 310.15) * 1000
+    return [asymmetry_dh, asymmetry_ds]
 
 def asymmetric_int_loop_initiation_energy(): ...
 
@@ -165,7 +168,11 @@ def asymmetric_int_loop_initiation_energy(): ...
 def asymmetric_int_loop_mismatch_energy(): ...
 
 
-def asymmetric_int_loop_energy(): ...
+def asymmetric_int_loop_energy(): 
+    asymmetric_int_loop_dh = asymmetric_int_loop_ds = 0
+    # asymmetry correct energy
+    asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy()
+    
 
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
@@ -173,10 +180,6 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
     int_loop_dh = 0
     int_loop_ds = 0
     int_loop_dg = 0
-
-    asymmetry_dg = 0.4
-    asymmetry_dh = 0
-    asymmetry_ds = ((asymmetry_dh - asymmetry_dg) / 310.15) * 1000
 
     first_loop_length = len(segment1) - segment1.count("-")
     second_loop_length = len(segment2) - segment2.count("-")
@@ -207,7 +210,14 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
         ...
     # Other Internal Loops
     else:
-        ...
+        asymmetric_int_loop_dh, asymmetric_int_loop_ds = asymmetric_int_loop_energy()
+        int_loop_dh += asymmetric_int_loop_dh
+        int_loop_ds += asymmetric_int_loop_ds
+    
+    return [
+        int_loop_dh,
+        int_loop_ds
+    ]
 
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
