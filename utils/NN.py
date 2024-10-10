@@ -162,7 +162,10 @@ def asymmetry_correct_energy():
     asymmetry_ds = ((asymmetry_dh - asymmetry_dg) / 310.15) * 1000
     return [asymmetry_dh, asymmetry_ds]
 
-def asymmetric_int_loop_initiation_energy(): ...
+def asymmetric_int_loop_initiation_energy(): 
+    initiation_dg = []
+    initiation_dh = []
+    initiation_ds = [((x - y) / 310.15) * 1000 for x, y in zip(initiation_dh, initiation_dg)]
 
 
 def asymmetric_int_loop_mismatch_energy(): ...
