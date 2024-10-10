@@ -34,6 +34,7 @@ def loop_detective(duplex_str: str) -> defaultdict:
 
 
 def base2int(base: str) -> int:
+    """将2-mer转化为索引号"""
     trantab = str.maketrans("ACGTN", "01234")
     return int(base.upper().translate(trantab), base=5)
 
@@ -165,8 +166,6 @@ def asymmetric_int_loop_mismatch_energy(): ...
 
 
 def asymmetric_int_loop_energy(): ...
-
-
 
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
