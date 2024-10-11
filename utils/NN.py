@@ -220,15 +220,29 @@ def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
     return [initiation_dh[loop_sum - 4], initiation_ds[loop_sum - 4]]
 
 
-def asymmetric_int_loop_mismatch_energy(segment1: str, segmnet2: str) -> list:
+def asymmetric_int_loop_mismatch_energy(
+    segment1: str, segmnet2: str, int_loop_type: str
+) -> list:
     """只有非对称且min loop > 1 才考虑mismatch"""
+    # int loop type
+    if int_loop_type.startswith("1"):
+        return [0.0, 0.0]
+    # mismatch energy calc by segment
+    
 
 
-def asymmetric_int_loop_energy(loop_sum: int, loop_diff_abs: int) -> list:
+def asymmetric_int_loop_energy(
+    segment1: str, segment2: str, loop_sum: int, loop_diff_abs: int, loop_type: str
+) -> list:
     asymmetric_int_loop_dh = asymmetric_int_loop_ds = 0
+    # intermolecular initiation energy
+    ii_dh, ii_ds = intermolecular_initiation_energy()
+    # loop sum initiation energy
+    li_dh, li_ds = asymmetric_int_loop_initiation_energy(loop_sum)
     # asymmetry correct energy
     asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy(loop_diff_abs)
-    #
+    # mismatch energy
+    m_dh, m_ds = asymmetric_int_loop_mismatch_energy(segment1, segment2, loop_type)
 
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
@@ -240,33 +254,18 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
     first_loop_length = len(segment1) - segment1.count("-")
     second_loop_length = len(segment2) - segment2.count("-")
     loop_sum = first_loop_length + second_loop_length
+    loop_type = f"{min(first_loop_length, second_loop_length)}{max(first_loop_length, second_loop_length)}"
     is_symmetric = loop_sum <= 4 and max(first_loop_length, second_loop_length) < 3
-    # 1 * n
-    if min(first_loop_length, second_loop_length) == 1:
-        # 1 * 1
-        if loop_sum == 2:
-            ...
-        # 1 * 2
-        elif loop_sum == 3:
-            ...
-        # n > 2, asymmetry consider
-        else:
-            loop_diff_abs = abs(first_loop_length - second_loop_length)
-            int_loop_dg += asymmetry_dg * loop_diff_abs
-    else:
-        # 2 * 2
-        if loop_sum == 4:
-            ...
-        # n1 * n2 (min(n1, n2) >= 2)
-        else:
-            ...
 
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
         ...
     # Other Internal Loops
     else:
-        asymmetric_int_loop_dh, asymmetric_int_loop_ds = asymmetric_int_loop_energy()
+        loop_diff_abs = abs(first_loop_length - second_loop_length)
+        asymmetric_int_loop_dh, asymmetric_int_loop_ds = asymmetric_int_loop_energy(
+            segment1, segment2, loop_sum, loop_diff_abs, loop_type
+        )
         int_loop_dh += asymmetric_int_loop_dh
         int_loop_ds += asymmetric_int_loop_ds
 
