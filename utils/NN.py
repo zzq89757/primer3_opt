@@ -220,7 +220,8 @@ def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
     return [initiation_dh[loop_sum - 4], initiation_ds[loop_sum - 4]]
 
 
-def asymmetric_int_loop_mismatch_energy(segment1: str, segmnet2: str) -> list: ...
+def asymmetric_int_loop_mismatch_energy(segment1: str, segmnet2: str) -> list:
+    """只有非对称且min loop > 1 才考虑mismatch"""
 
 
 def asymmetric_int_loop_energy(loop_sum: int, loop_diff_abs: int) -> list:
