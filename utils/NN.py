@@ -32,14 +32,14 @@ def loop_detective(duplex_str: str) -> defaultdict:
     return loop_region_dict
 
 
-def base2int(base: str) -> int:
-    """将2-mer转化为索引号"""
+def basen2int(base: str) -> int:
+    """将base(with N)转化为索引号"""
     trantab = str.maketrans("ACGTN", "01234")
     return int(base.upper().translate(trantab), base=5)
 
 
-def base4int(base: str) -> int:
-    """将X1 Y1 X2 Y2 转化为索引号"""
+def base2int(base: str) -> int:
+    """将base(without N)转化为索引号"""
     trantab = str.maketrans("ACGT", "0123")
     return int(base.upper().translate(trantab), base=4)
 
@@ -107,7 +107,7 @@ def stack_energy(segment: str) -> list:
     # print(delta_g)
     for i in range(len(segment) - 1):
         two_mer = segment[i] + segment[i + 1]
-        d_index = base2int(two_mer)
+        d_index = basen2int(two_mer)
         stack_dh += delta_h[d_index]
         stack_ds += delta_s[d_index]
     return [stack_dh, stack_ds]
@@ -220,7 +220,7 @@ def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
     return [initiation_dh[loop_sum - 4], initiation_ds[loop_sum - 4]]
 
 
-def asymmetric_int_loop_mismatch_energy(loop_diff_abs: int) -> list: ...
+def asymmetric_int_loop_mismatch_energy(segment1: str, segmnet2: str) -> list: ...
 
 
 def asymmetric_int_loop_energy(loop_sum: int, loop_diff_abs: int) -> list:
@@ -304,14 +304,14 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             loop_type = region_type_li[loop_idx]
             loop_length = end - start + 1
             if not loop_type:  # bulge
-                bulge_dh, bulge_dg = bulge_energy(loop_length)
+                bulge_dh, bulge_ds = bulge_energy(loop_length)
                 dH += bulge_dh
-                dG += bulge_dg
+                dS += bulge_ds
                 print(f"bulge {start} -> {end}")
             else:  # int loop
-                int_loop_dh, int_loop_dg = int_loop_energy()
+                int_loop_dh, int_loop_ds = int_loop_energy()
                 dH += int_loop_dh
-                dG += int_loop_dg
+                dS += int_loop_ds
                 print(f"intloop {start} -> {end}")
 
         region_idx += 1
