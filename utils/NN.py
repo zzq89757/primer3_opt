@@ -414,7 +414,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
         ]      
     ])
     
-    int_loop_energy_dict["11dg"] = deque([
+    int_loop_energy_dict["11dh"] = deque([
         # A A
         # T T
         [
