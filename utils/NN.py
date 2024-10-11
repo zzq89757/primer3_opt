@@ -152,7 +152,12 @@ def bulge_energy(bulge_length: int) -> list:
             4.9,
         ]
     )
-    bulge_loop_dict["ds"] = deque([((_dh - _dg) / 310.15) * 1000 for _dh, _dg in zip(bulge_loop_dict["dh"], bulge_loop_dict["dg"])])
+    bulge_loop_dict["ds"] = deque(
+        [
+            ((_dh - _dg) / 310.15) * 1000
+            for _dh, _dg in zip(bulge_loop_dict["dh"], bulge_loop_dict["dg"])
+        ]
+    )
     return [
         bulge_loop_dict["dh"][bulge_length - 1],
         bulge_loop_dict["ds"][bulge_length - 1],
@@ -169,12 +174,41 @@ def asymmetry_correct_energy():
     return [asymmetry_dh, asymmetry_ds]
 
 
-def asymmetric_int_loop_initiation_energy():
-    initiation_dg = []
-    initiation_dh = []
+def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
+    initiation_dg = [
+        3.1,
+        3.5,
+        3.9,
+        4.1,
+        4.2,
+        4.3,
+        4.5,
+        4.6,
+        4.6,
+        4.7,
+        4.8,
+        4.9,
+        5.0,
+        5.0,
+        5.1,
+        5.1,
+        5.2,
+        5.3,
+        5.3,
+        5.3,
+        5.4,
+        5.4,
+        5.5,
+        5.5,
+        5.6,
+        5.6,
+        5.6,
+    ]
+    initiation_dh = [0.0] * 27
     initiation_ds = [
         ((x - y) / 310.15) * 1000 for x, y in zip(initiation_dh, initiation_dg)
     ]
+    return [initiation_dh[loop_sum - 4], initiation_ds[loop_sum - 4]]
 
 
 def asymmetric_int_loop_mismatch_energy(): ...
@@ -232,7 +266,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     dS = 0
     dG = 0
     dH = 0
-    
+
     ii_dh = -7.2  # intermolecular initiation dh
     ii_dg = -1.0  # intermolecular initiation dg
     ii_ds = (ii_dh - ii_dg) / 310.15 * 1000  # intermolecular initiation ds
