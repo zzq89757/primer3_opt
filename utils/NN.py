@@ -4,7 +4,6 @@ from collections import defaultdict, deque
 def loop_detective(duplex_str: str) -> defaultdict:
     """
     检测分子杂交(duplex)中的loop结构(internal loop 和 bulge loop)
-
     """
     seq1, seq2 = duplex_str.split("\n")
     # ord sum is  AT: 65 + 84 = 149   CG: 67 + 71 = 138
@@ -37,6 +36,12 @@ def base2int(base: str) -> int:
     """将2-mer转化为索引号"""
     trantab = str.maketrans("ACGTN", "01234")
     return int(base.upper().translate(trantab), base=5)
+
+
+def base4int(base: str) -> int:
+    """将X1 Y1 X2 Y2 转化为索引号"""
+    trantab = str.maketrans("ACGT", "0123")
+    return int(base.upper().translate(trantab), base=4)
 
 
 def stack_energy(segment: str) -> list:
@@ -97,14 +102,15 @@ def stack_energy(segment: str) -> list:
     ]
     delta_g = [(x - 310.15 * y) / 1000 for x, y in zip(delta_h, delta_s)]
     stack_dh = 0
+    stack_ds = 0
     stack_dg = 0
     # print(delta_g)
     for i in range(len(segment) - 1):
         two_mer = segment[i] + segment[i + 1]
         d_index = base2int(two_mer)
-        stack_dg += delta_g[d_index]
         stack_dh += delta_h[d_index]
-    return [stack_dh, stack_dg]
+        stack_ds += delta_s[d_index]
+    return [stack_dh, stack_ds]
 
 
 def bulge_energy(bulge_length: int) -> list:
@@ -146,10 +152,10 @@ def bulge_energy(bulge_length: int) -> list:
             4.9,
         ]
     )
-
+    bulge_loop_dict["ds"] = deque([((_dh - _dg) / 310.15) * 1000 for _dh, _dg in zip(bulge_loop_dict["dh"], bulge_loop_dict["dg"])])
     return [
         bulge_loop_dict["dh"][bulge_length - 1],
-        bulge_loop_dict["dg"][bulge_length - 1],
+        bulge_loop_dict["ds"][bulge_length - 1],
     ]
 
 
@@ -162,20 +168,22 @@ def asymmetry_correct_energy():
     asymmetry_ds = ((asymmetry_dh - asymmetry_dg) / 310.15) * 1000
     return [asymmetry_dh, asymmetry_ds]
 
-def asymmetric_int_loop_initiation_energy(): 
+
+def asymmetric_int_loop_initiation_energy():
     initiation_dg = []
     initiation_dh = []
-    initiation_ds = [((x - y) / 310.15) * 1000 for x, y in zip(initiation_dh, initiation_dg)]
+    initiation_ds = [
+        ((x - y) / 310.15) * 1000 for x, y in zip(initiation_dh, initiation_dg)
+    ]
 
 
 def asymmetric_int_loop_mismatch_energy(): ...
 
 
-def asymmetric_int_loop_energy(): 
+def asymmetric_int_loop_energy():
     asymmetric_int_loop_dh = asymmetric_int_loop_ds = 0
     # asymmetry correct energy
     asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy()
-    
 
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
@@ -216,19 +224,18 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
         asymmetric_int_loop_dh, asymmetric_int_loop_ds = asymmetric_int_loop_energy()
         int_loop_dh += asymmetric_int_loop_dh
         int_loop_ds += asymmetric_int_loop_ds
-    
-    return [
-        int_loop_dh,
-        int_loop_ds
-    ]
+
+    return [int_loop_dh, int_loop_ds]
 
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     dS = 0
     dG = 0
     dH = 0
+    
     ii_dh = -7.2  # intermolecular initiation dh
     ii_dg = -1.0  # intermolecular initiation dg
+    ii_ds = (ii_dh - ii_dg) / 310.15 * 1000  # intermolecular initiation ds
 
     seq1, seq2 = duplex_str.split("\n")
     region_pos_li = loop_region_dict["region_pos"]
@@ -247,9 +254,9 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             # if stack length > 1, participate energy calc
             if stack_length > 1:
                 segment = seq1[start : end + 1]
-                stack_dh, stack_dg = stack_energy(segment)
+                stack_dh, stack_ds = stack_energy(segment)
                 dH += stack_dh
-                dG += stack_dg
+                dS += stack_ds
             print(f"stack {start}->{end}")
         # loop
         else:
