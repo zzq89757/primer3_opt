@@ -221,18 +221,18 @@ def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
 
 
 def asymmetric_int_loop_mismatch_energy(
-    segment1: str, segmnet2: str, int_loop_type: str
+    segment1: str, segmnet2: str, int_loop_type: list
 ) -> list:
     """只有非对称且min loop > 1 才考虑mismatch"""
-    # int loop type
-    if int_loop_type.startswith("1"):
+    # min loop length == 1,do NOT consider mismatch
+    if int_loop_type[0] == 1:
         return [0.0, 0.0]
     # mismatch energy calc by segment
     
 
 
 def asymmetric_int_loop_energy(
-    segment1: str, segment2: str, loop_sum: int, loop_diff_abs: int, loop_type: str
+    segment1: str, segment2: str, loop_sum: int, loop_diff_abs: int, loop_type: list
 ) -> list:
     asymmetric_int_loop_dh = asymmetric_int_loop_ds = 0
     # intermolecular initiation energy
@@ -242,7 +242,7 @@ def asymmetric_int_loop_energy(
     # asymmetry correct energy
     asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy(loop_diff_abs)
     # mismatch energy
-    m_dh, m_ds = asymmetric_int_loop_mismatch_energy(segment1, segment2, loop_type)
+    mm_dh, mm_ds = asymmetric_int_loop_mismatch_energy(segment1, segment2, loop_type)
 
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
@@ -254,8 +254,10 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
     first_loop_length = len(segment1) - segment1.count("-")
     second_loop_length = len(segment2) - segment2.count("-")
     loop_sum = first_loop_length + second_loop_length
-    loop_type = f"{min(first_loop_length, second_loop_length)}{max(first_loop_length, second_loop_length)}"
-    is_symmetric = loop_sum <= 4 and max(first_loop_length, second_loop_length) < 3
+    max_loop_length = max(first_loop_length, second_loop_length)
+    min_loop_length = loop_sum - max_loop_length
+    loop_type = [min_loop_length, max_loop_length]
+    is_symmetric = loop_sum <= 4 and max_loop_length < 3
 
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
