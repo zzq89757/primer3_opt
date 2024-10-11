@@ -283,7 +283,7 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     # int loop energy matrix
     int_loop_energy_dict = defaultdict(deque)
-    int_loop_energy_dict['11dg'] = deque([
+    int_loop_energy_dict["11dg"] = deque([
         # A
         # T 
         [
@@ -432,6 +432,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
         
     ])
     
+    int_loop_energy_dict["11dh"]
     # init variable
     dH = dS = 0
     
