@@ -545,6 +545,8 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
         ],
 ])
     
+    
+    
     # init variable
     dH = dS = 0
     
