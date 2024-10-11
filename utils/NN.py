@@ -298,26 +298,26 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             # A C
             # T G
             [
-                0.8, 1.4, -0.4, 1.0, # AA AC AG AT
-                1.6, 2.1, 1.0, 1.6, # CA CC CG CT
+                0.8,  1.4, -0.4, 1.0, # AA AC AG AT
+                1.6,  2.1,  1.0, 1.6, # CA CC CG CT
                 -0.2, 1.0, -1.2, 2.0, # GA GC GG GT
-                1.0, 1.4, 2.0, 1.1, # TA TC TG TT    
+                1.0,  1.4,  2.0, 1.1, # TA TC TG TT    
             ],
             # A G
             # T C
             [
-                1.0, 1.7, 0.3, 1.0, # AA AC AG AT
-                1.5, 2.0, 1.0, 1.0, # CA CC CG CT
+                1.0, 1.7,  0.3, 1.0, # AA AC AG AT
+                1.5, 2.0,  1.0, 1.0, # CA CC CG CT
                 0.1, 1.0, -0.3, 2.0, # GA GC GG GT
-                1.0, 1.4, 2.0, 0.6, # TA TC TG TT 
+                1.0, 1.4,  2.0, 0.6, # TA TC TG TT 
             ],
             # A T
             # T A
             [
-                1.2, 1.7, 0.2, 1.0, # AA AC AG AT
-                1.7, 2.7, 1.0, 1.4, # CA CC CG CT
+                1.2, 1.7,  0.2, 1.0, # AA AC AG AT
+                1.7, 2.7,  1.0, 1.4, # CA CC CG CT
                 0.2, 1.0, -0.3, 2.0, # GA GC GG GT
-                1.0, 1.4, 2.0, 1.4, # TA TC TG TT 
+                1.0, 1.4,  2.0, 1.4, # TA TC TG TT 
             ]
             
         ],
@@ -335,26 +335,26 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             # C C
             # G G
             [
-                0.6, 1.2, -0.5, 1.0, # AA AC AG AT
-                1.6, 1.5, 1.0, 1.6, # CA CC CG CT
+                0.6,  1.2, -0.5, 1.0, # AA AC AG AT
+                1.6,  1.5,  1.0, 1.6, # CA CC CG CT
                 -0.1, 1.0, -1.3, 2.0, # GA GC GG GT
-                1.0, 1.0, 2.0, 0.3, # TA TC TG TT 
+                1.0,  1.0,  2.0, 0.3, # TA TC TG TT 
             ],
             # C G
             # G C
             [
-                0.9, 1.5, 0.1, 1.0, # AA AC AG AT
-                1.5, 1.4, 1.0, 1.0, # CA CC CG CT
-                0.1, 1.0, -0.3, 2.0, # GA GC GG GT
-                1.0, 1.0, 2.0, -0.2, # TA TC TG TT 
+                0.9, 1.5,  0.1,  1.0, # AA AC AG AT
+                1.5, 1.4,  1.0,  1.0, # CA CC CG CT
+                0.1, 1.0, -0.3,  2.0, # GA GC GG GT
+                1.0, 1.0,  2.0, -0.2, # TA TC TG TT 
             ],
             # C T
             # G A
             [
-                1.0, 1.5, 0.1, 1.0, # AA AC AG AT
-                1.7, 2.0, 1.0, 1.4, # CA CC CG CT
+                1.0, 1.5,  0.1, 1.0, # AA AC AG AT
+                1.7, 2.0,  1.0, 1.4, # CA CC CG CT
                 0.3, 1.0, -0.3, 2.0, # GA GC GG GT
-                1.0, 1.0, 2.0, 0.6, # TA TC TG TT 
+                1.0, 1.0,  2.0, 0.6, # TA TC TG TT 
             ]
         ],
         # G 
@@ -363,34 +363,34 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             # G A
             # C T
             [
-                0.9, 2.1, 0.5, 1.0, # AA AC AG AT
-                1.4, 1.8, 1.0, 1.4, # CA CC CG CT
+                0.9,  2.1,  0.5, 1.0, # AA AC AG AT
+                1.4,  1.8,  1.0, 1.4, # CA CC CG CT
                 -0.1, 1.0, -0.7, 2.0, # GA GC GG GT
-                1.0, 2.0, 2.0, 1.1, # TA TC TG TT 
+                1.0,  2.0,  2.0, 1.1, # TA TC TG TT 
             ],
             # G C
             # C G
             [
-                0.3, 1.3, -0.8, 1.0, # AA AC AG AT
-                1.3, 1.6, 1.0, 1.6, # CA CC CG CT
+                0.3,  1.3, -0.8, 1.0, # AA AC AG AT
+                1.3,  1.6,  1.0, 1.6, # CA CC CG CT
                 -0.8, 1.0, -2.2, 2.0, # GA GC GG GT
-                1.0, 1.6, 2.0, 0.9, # TA TC TG TT 
+                1.0,  1.6,  2.0, 0.9, # TA TC TG TT 
             ],
             # G G
             # C C
             [
-                0.6, 1.6, -0.1, 1.0, # AA AC AG AT
-                1.2, 1.5, 1.0, 1.0, # CA CC CG CT
+                0.6,  1.6, -0.1, 1.0, # AA AC AG AT
+                1.2,  1.5,  1.0, 1.0, # CA CC CG CT
                 -0.5, 1.0, -1.3, 2.0, # GA GC GG GT
-                1.0, 1.6, 2.0, 0.3, # TA TC TG TT 
+                1.0,  1.6,  2.0, 0.3, # TA TC TG TT 
             ],
             # G T
             # C A
             [
-                0.8, 1.6, -0.2, 1.0, # AA AC AG AT
-                1.4, 2.1, 1.0, 1.4, # CA CC CG CT
+                0.8,  1.6, -0.2, 1.0, # AA AC AG AT
+                1.4,  2.1,  1.0, 1.4, # CA CC CG CT
                 -0.4, 1.0, -1.2, 2.0, # GA GC GG GT
-                1.0, 1.6, 2.0, 1.1, # TA TC TG TT 
+                1.0,  1.6,  2.0, 1.1, # TA TC TG TT 
             ]
         ],
         # T
@@ -408,9 +408,9 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             # A G
             [
                 0.9, 1.4, -0.1, 1.0, # AA AC AG AT
-                2.1, 1.8, 1.0, 2.0, # CA CC CG CT
+                2.1, 1.8,  1.0, 2.0, # CA CC CG CT
                 0.5, 1.0, -0.7, 2.0, # GA GC GG GT
-                1.0, 1.4, 2.0, 1.1, # TA TC TG TT 
+                1.0, 1.4,  2.0, 1.1, # TA TC TG TT 
             ],
             # T G
             # A C
