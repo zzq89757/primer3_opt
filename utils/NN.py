@@ -266,6 +266,8 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
         symmetric_int_loop_dh, symmetric_int_loop_ds = symmetric_int_loop_energy(loop_type)
+        int_loop_dh += symmetric_int_loop_dh
+        int_loop_ds += symmetric_int_loop_ds
     # Other Internal Loops
     else:
         loop_diff_abs = abs(first_loop_length - second_loop_length)
