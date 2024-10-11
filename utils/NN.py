@@ -113,6 +113,13 @@ def stack_energy(segment: str) -> list:
     return [stack_dh, stack_ds]
 
 
+def intermolecular_initiation_energy() -> list:
+    ii_dh = -7.2  # intermolecular initiation dh
+    ii_dg = -1.0  # intermolecular initiation dg
+    ii_ds = (ii_dh - ii_dg) / 310.15 * 1000  # intermolecular initiation ds
+    return [ii_dh, ii_ds]
+
+
 def bulge_energy(bulge_length: int) -> list:
     """计算不同长度bulge的总能量值"""
     # bulge loop dh dg
@@ -164,14 +171,16 @@ def bulge_energy(bulge_length: int) -> list:
     ]
 
 
-def symmetric_int_loop_energy(): ...
+def symmetric_int_loop_energy(loop_sum: int) -> list: ...
 
 
-def asymmetry_correct_energy():
+def asymmetry_correct_energy(loop_diff_abs: int) -> list:
     asymmetry_dg = 0.4
     asymmetry_dh = 0
     asymmetry_ds = ((asymmetry_dh - asymmetry_dg) / 310.15) * 1000
-    return [asymmetry_dh, asymmetry_ds]
+    asymmetry_correct_dh = asymmetry_dh * loop_diff_abs
+    asymmetry_correct_ds = asymmetry_ds * asymmetry_ds
+    return [asymmetry_correct_dh, asymmetry_correct_ds]
 
 
 def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
@@ -211,13 +220,14 @@ def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
     return [initiation_dh[loop_sum - 4], initiation_ds[loop_sum - 4]]
 
 
-def asymmetric_int_loop_mismatch_energy(): ...
+def asymmetric_int_loop_mismatch_energy(loop_diff_abs: int) -> list: ...
 
 
-def asymmetric_int_loop_energy():
+def asymmetric_int_loop_energy(loop_sum: int, loop_diff_abs: int) -> list:
     asymmetric_int_loop_dh = asymmetric_int_loop_ds = 0
     # asymmetry correct energy
-    asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy()
+    asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy(loop_diff_abs)
+    #
 
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
@@ -266,10 +276,6 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     dS = 0
     dG = 0
     dH = 0
-
-    ii_dh = -7.2  # intermolecular initiation dh
-    ii_dg = -1.0  # intermolecular initiation dg
-    ii_ds = (ii_dh - ii_dg) / 310.15 * 1000  # intermolecular initiation ds
 
     seq1, seq2 = duplex_str.split("\n")
     region_pos_li = loop_region_dict["region_pos"]
