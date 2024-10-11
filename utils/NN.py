@@ -171,7 +171,11 @@ def bulge_energy(bulge_length: int) -> list:
     ]
 
 
-def symmetric_int_loop_energy(loop_sum: int) -> list: ...
+def symmetric_int_loop_energy(loop_type: list) -> list:
+    """对称的int loop结构直接读取矩阵数据累加即可"""
+    symmetric_int_loop_dh = symmetric_int_loop_ds = 0
+    
+    return [symmetric_int_loop_dh, symmetric_int_loop_ds]
 
 
 def asymmetry_correct_energy(loop_diff_abs: int) -> list:
@@ -261,7 +265,7 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
 
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
-        ...
+        symmetric_int_loop_dh, symmetric_int_loop_ds = symmetric_int_loop_energy(loop_type)
     # Other Internal Loops
     else:
         loop_diff_abs = abs(first_loop_length - second_loop_length)
