@@ -2334,7 +2334,8 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     # init variable
     dH = dS = dG = 0
     base = 4000000000
-    
+    T_KELVIN = 273.15
+    DNA_nM = 50
 
     seq1, seq2 = duplex_str.split("\n")
     region_pos_li = loop_region_dict["region_pos"]
@@ -2385,6 +2386,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     print(f"dS is {dS}")
     print(f"dH is {dH}")
     Tm = dH / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
+    print(f"Tm is {Tm}")
 
 
 if __name__ == "__main__":
