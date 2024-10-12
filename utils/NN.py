@@ -2390,6 +2390,12 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     print(f"Tm is {Tm}")
 
 
+def main():
+    duplex_str = "CAGACG\nGTAGGC"
+    duplex_str = "CA--G--CG\nGTGAAAGGC"
+    loop_region_dict = loop_detective(duplex_str)
+    calc_Tm_by_NN(duplex_str, loop_region_dict)
+    
+    
 if __name__ == "__main__":
-    loop_region_dict = loop_detective("CAGACG\nGTAGGC")
-    calc_Tm_by_NN("CAGACG\nGTAGGC", loop_region_dict)
+    main()
