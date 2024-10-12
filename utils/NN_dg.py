@@ -335,23 +335,22 @@ def ATclosure_energy(segment1: str) -> list:
 def asymmetric_int_loop_energy(
     segment1: str, segment2: str, loop_sum: int, loop_diff_abs: int, loop_type: list
 ) -> list:
-    asymmetric_int_loop_dh = asymmetric_int_loop_ds = 0
+    asymmetric_int_loop_dh = asymmetric_int_loop_dg = 0
     # loop sum initiation energy
-    li_dh, li_ds = asymmetric_int_loop_initiation_energy(loop_sum)
+    li_dh, li_dg = asymmetric_int_loop_initiation_energy(loop_sum)
     # asymmetry correct energy
-    asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy(loop_diff_abs)
+    asymmetry_correct_dh, asymmetry_correct_dg = asymmetry_correct_energy(loop_diff_abs)
     # mismatch energy
-    mm_dh, mm_ds = asymmetric_int_loop_mismatch_energy(segment1, segment2, loop_type)
+    mm_dh, mm_dg = asymmetric_int_loop_mismatch_energy(segment1, segment2, loop_type)
     # AT closure 
-    at_dh, at_ds = ATclosure_energy(segment1)
+    at_dh, at_dg = ATclosure_energy(segment1)
     asymmetric_int_loop_dh = li_dh + asymmetry_correct_dh + mm_dh + at_dh
-    asymmetric_int_loop_ds = li_ds + asymmetry_correct_ds + mm_ds + at_ds
-    return [asymmetric_int_loop_dh, asymmetric_int_loop_ds]
+    asymmetric_int_loop_dg = li_dg + asymmetry_correct_dg + mm_dg + at_dg
+    return [asymmetric_int_loop_dh, asymmetric_int_loop_dg]
 
 def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultdict) -> list:
     """对intloop进行分型并计算能量"""
     int_loop_dh = 0
-    int_loop_ds = 0
     int_loop_dg = 0
 
 
@@ -366,19 +365,19 @@ def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultd
 
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
-        symmetric_int_loop_dh, symmetric_int_loop_ds = symmetric_int_loop_energy(segment1, segment2, loop_sum, int_loop_energy_dict)
+        symmetric_int_loop_dh, symmetric_int_loop_dg = symmetric_int_loop_energy(segment1, segment2, loop_sum, int_loop_energy_dict)
         int_loop_dh += symmetric_int_loop_dh
-        int_loop_ds += symmetric_int_loop_ds
+        int_loop_dg += symmetric_int_loop_dg
     # Other Internal Loops
     else:
         loop_diff_abs = abs(first_loop_length - second_loop_length)
-        asymmetric_int_loop_dh, asymmetric_int_loop_ds = asymmetric_int_loop_energy(
+        asymmetric_int_loop_dh, asymmetric_int_loop_dg = asymmetric_int_loop_energy(
             segment1, segment2, loop_sum, loop_diff_abs, loop_type
         )
         int_loop_dh += asymmetric_int_loop_dh
-        int_loop_ds += asymmetric_int_loop_ds
+        int_loop_dg += asymmetric_int_loop_dg
 
-    return [int_loop_dh, int_loop_ds]
+    return [int_loop_dh, int_loop_dg]
 
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
@@ -2323,7 +2322,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
 ])
 
     # init variable
-    dH = dS = dG = 0
+    dH = dG = 0
     base = 4000000000
     T_KELVIN = 273.15
     DNA_nM = 50
@@ -2346,48 +2345,47 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             if stack_length > 1:
                 segment = seq1[start : end + 1]
                 print(segment)
-                stack_dh, stack_ds = stack_energy(segment)
+                stack_dh, stack_dg = stack_energy(segment)
                 print(f"stack_dh is {stack_dh}")
                 dH += stack_dh
-                dS += stack_ds
+                dG += stack_dg
             print(f"stack {start}->{end}")
         # loop
         else:
             # intermolecular initiation energy
-            ii_dh, ii_ds = intermolecular_initiation_energy()
+            ii_dh, ii_dg = intermolecular_initiation_energy()
             dH += ii_dh
-            dS += ii_ds
+            dG += ii_dg
             loop_idx = region_idx // 2
             loop_type = region_type_li[loop_idx]
             loop_length = end - start + 1
             if not loop_type:  # bulge
-                bulge_dh, bulge_ds = bulge_energy(loop_length)
+                bulge_dh, bulge_dg = bulge_energy(loop_length)
                 dH += bulge_dh
-                dS += bulge_ds
+                dG += bulge_dg
                 print(f"bulge {start} -> {end}")
             else:  # int loop
                 segment1 = seq1[start - 1:end + 2]
                 print(segment1)
                 segment2 = seq2[start - 1:end + 2]
                 print(segment2)
-                int_loop_dh, int_loop_ds = int_loop_energy(segment1, segment2, int_loop_energy_dict)
+                int_loop_dh, int_loop_dg = int_loop_energy(segment1, segment2, int_loop_energy_dict)
                 print(f"int_loop_dh is {int_loop_dh}")
                 dH += int_loop_dh
-                dS += int_loop_ds
+                dG += int_loop_dg
                 print(f"intloop {start} -> {end}")   
         region_idx += 1       
         
     # calc Tm
-    print(f"dS is {dS}")
+    print(f"dG is {dG}")
     print(f"dH is {dH}")
-    print(f"dG is {dH - 310.15 * dS / 1000}")
-    Tm = dH / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
-    print(f"Tm is {Tm}")
+    # Tm = dH / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
+    # print(f"Tm is {Tm}")
 
 
 def main():
     duplex_str = "CAGACG\nGTAGGC"
-    duplex_str = "CA--G--CG\nGTGAAAGGC"
+    # duplex_str = "CA--G--CG\nGTGAAAGGC"
     loop_region_dict = loop_detective(duplex_str)
     calc_Tm_by_NN(duplex_str, loop_region_dict)
     
