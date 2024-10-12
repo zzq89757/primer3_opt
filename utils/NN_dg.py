@@ -17,7 +17,7 @@ def loop_detective(duplex_str: str) -> defaultdict:
     )  # region_pos: start and end index, region_type: 0 for bulge,1 for int loop
     region_type_flag = 0  # 0 for bulge,1 for int loop
     flag = 0  # switch to record region start and end index
-    print(ord_sum_li)
+    # print(ord_sum_li)
     for i, v in enumerate(ord_sum_li):
         if v not in match_asc_li and not flag:
             loop_region_dict["region_pos"].append(i)
@@ -29,25 +29,8 @@ def loop_detective(duplex_str: str) -> defaultdict:
             loop_region_dict["region_type"].append(region_type_flag)
             flag = 0
             region_type_flag = 0
-    print(loop_region_dict)
+    # print(loop_region_dict)
     return loop_region_dict
-
-
-def terminal_AT_penalty(seq) -> list:
-    penalty_dh = penalty_ds = 0
-    for i in [seq[0],seq[-1]]:
-            if i in ["A","T"]:
-                penalty_ds += -41
-                penalty_dh += -23
-            else:
-                penalty_ds += 28
-                penalty_dh += -1
-    return [penalty_dh, penalty_ds]
-
-def basen2int(base: str) -> int:
-    """将base(with N)转化为索引号"""
-    trantab = str.maketrans("ACGTN", "01234")
-    return int(base.upper().translate(trantab), base=5)
 
 
 def base2int(base: str) -> int:
@@ -70,26 +53,21 @@ def stack_energy(segment: str) -> list:
         -1.3, -2.2, -1.8, -1.4, # GA GC GG GT
         -0.6, -1.3, -1.5, -1.0  # TA TC TG TT
     ]
-    delta_s = [(x - y) / 310.15 * 1000 for x, y in zip(delta_h, delta_g)]
     stack_dh = 0
-    stack_ds = 0
     stack_dg = 0
     # print(delta_g)
     for i in range(len(segment) - 1):
         two_mer = segment[i] + segment[i + 1]
         d_index = base2int(two_mer)
         stack_dh += delta_h[d_index]
-        stack_ds += delta_s[d_index]
         stack_dg += delta_g[d_index]
-    print(f"stack dg is {stack_dg}")
-    return [stack_dh, stack_ds]
+    return [stack_dh, stack_dg]
 
 
 def intermolecular_initiation_energy() -> list:
     ii_dh = -7.2  # intermolecular initiation dh
     ii_dg = 1.0  # intermolecular initiation dg
-    ii_ds = (ii_dh - ii_dg) / 310.15 * 1000  # intermolecular initiation ds
-    return [ii_dh, ii_ds]
+    return [ii_dh, ii_dg]
 
 
 def bulge_energy(bulge_length: int) -> list:
@@ -134,9 +112,8 @@ def bulge_energy(bulge_length: int) -> list:
     
     bulge_loop_dh = bulge_loop_dict["dh"][bulge_length - 1]
     bulge_loop_dg = bulge_loop_dict["dg"][bulge_length - 1]
-    bulge_loop_ds = ((bulge_loop_dh - bulge_loop_dg) / 310.15) * 1000
     
-    return [bulge_loop_dh, bulge_loop_ds]
+    return [bulge_loop_dh, bulge_loop_dg]
 
 
 def index_intl11(upstream_base: str, downstream_base: str, x_base: str, y_base: str) -> list:
@@ -203,9 +180,8 @@ def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int, int_l
         symmetric_int_loop_dh += int_loop_energy_dict["22dh"][external_index][internal_index]
         symmetric_int_loop_dg += int_loop_energy_dict["22dg"][external_index][internal_index]
     print(f"symmetric_int_loop_dg is {symmetric_int_loop_dg}")
-    symmetric_int_loop_ds = ((symmetric_int_loop_dh - symmetric_int_loop_dg) / 310.15) * 1000
     
-    return [symmetric_int_loop_dh, symmetric_int_loop_ds]
+    return [symmetric_int_loop_dh, symmetric_int_loop_dg]
 
 
 def asymmetry_correct_energy(loop_diff_abs: int) -> list:
