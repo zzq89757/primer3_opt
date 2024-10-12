@@ -342,16 +342,15 @@ def asymmetric_int_loop_energy(
     segment1: str, segment2: str, loop_sum: int, loop_diff_abs: int, loop_type: list
 ) -> list:
     asymmetric_int_loop_dh = asymmetric_int_loop_ds = 0
-    # intermolecular initiation energy
-    ii_dh, ii_ds = intermolecular_initiation_energy()
+
     # loop sum initiation energy
     li_dh, li_ds = asymmetric_int_loop_initiation_energy(loop_sum)
     # asymmetry correct energy
     asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy(loop_diff_abs)
     # mismatch energy
     mm_dh, mm_ds = asymmetric_int_loop_mismatch_energy(segment1, segment2, loop_type)
-    asymmetric_int_loop_dh = ii_dh + li_dh + asymmetry_correct_dh + mm_dh
-    asymmetric_int_loop_ds = ii_ds + li_ds + asymmetry_correct_ds + mm_ds
+    asymmetric_int_loop_dh = li_dh + asymmetry_correct_dh + mm_dh
+    asymmetric_int_loop_ds = li_ds + asymmetry_correct_ds + mm_ds
     return [asymmetric_int_loop_dh, asymmetric_int_loop_ds]
 
 def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultdict) -> list:
@@ -2392,7 +2391,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
 
 def main():
     duplex_str = "CAGACG\nGTAGGC"
-    duplex_str = "CA--G--CG\nGTGAAAGGC"
+    # duplex_str = "CA--G--CG\nGTGAAAGGC"
     loop_region_dict = loop_detective(duplex_str)
     calc_Tm_by_NN(duplex_str, loop_region_dict)
     
