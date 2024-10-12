@@ -2385,6 +2385,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     # calc Tm
     print(f"dS is {dS}")
     print(f"dH is {dH}")
+    print(f"dG is {dH - 310.15 * dS / 1000}")
     Tm = dH / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
     print(f"Tm is {Tm}")
 
