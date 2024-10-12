@@ -2388,8 +2388,10 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     # calc Tm
     print(f"\ndG is {dG}")
     print(f"dH is {dH}")
-    # Tm = dH / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
-    # print(f"Tm is {Tm}")
+    dS = (dH - dG) / 310.15 * 1000
+    print(dS)
+    Tm = dH * 1000 / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
+    print(f"Tm is {Tm}")
 
 
 def main():
@@ -2398,6 +2400,8 @@ def main():
     duplex_str = "CA-GACG\nGTGAGGC"
     duplex_str = "GCCCG\nCGG-C"
     duplex_str = "GAACAG\nCT---C"
+    # duplex_str = "TAAACTGCC-----GGCAGTACATC\nATTTGACGGGTGAACCGTCATGTAG"
+    # duplex_str = "CCCTATT---------------------------ATTGACGTCAATA\nGGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTAT"
     loop_region_dict = loop_detective(duplex_str)
     calc_Tm_by_NN(duplex_str, loop_region_dict)
     
