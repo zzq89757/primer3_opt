@@ -33,6 +33,17 @@ def loop_detective(duplex_str: str) -> defaultdict:
     return loop_region_dict
 
 
+def terminal_AT_penalty(seq) -> list:
+    penalty_dh = penalty_ds = 0
+    for i in [seq[0],seq[-1]]:
+            if i in ["A","T"]:
+                penalty_ds += -41
+                penalty_dh += -23
+            else:
+                penalty_ds += 28
+                penalty_dh += -1
+    return [penalty_dh, penalty_ds]
+
 def basen2int(base: str) -> int:
     """将base(with N)转化为索引号"""
     trantab = str.maketrans("ACGTN", "01234")
@@ -338,19 +349,33 @@ def asymmetric_int_loop_mismatch_energy(
     mismatch_ds = ((mismatch_dh - mismatch_dg) / 310.15) * 1000
     return [mismatch_dh, mismatch_ds]
 
+
+def ATclosure_energy(segment1: str) -> list:
+    closure_AT_dh = closure_AT_ds = 0
+    if segment1[0] == "A" or segment1[0] == "T":
+        closure_AT_dh += 3.2
+        closure_AT_ds += (3.2 / 310.15) * 1000
+    if segment1[-1] == "A" or segment1[-1] == "T":
+        closure_AT_dh += 3.2
+        closure_AT_ds += (3.2 / 310.15) * 1000
+    return [closure_AT_dh, closure_AT_ds]
+        
+        
+
 def asymmetric_int_loop_energy(
     segment1: str, segment2: str, loop_sum: int, loop_diff_abs: int, loop_type: list
 ) -> list:
     asymmetric_int_loop_dh = asymmetric_int_loop_ds = 0
-
     # loop sum initiation energy
     li_dh, li_ds = asymmetric_int_loop_initiation_energy(loop_sum)
     # asymmetry correct energy
     asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy(loop_diff_abs)
     # mismatch energy
     mm_dh, mm_ds = asymmetric_int_loop_mismatch_energy(segment1, segment2, loop_type)
-    asymmetric_int_loop_dh = li_dh + asymmetry_correct_dh + mm_dh
-    asymmetric_int_loop_ds = li_ds + asymmetry_correct_ds + mm_ds
+    # AT closure 
+    at_dh, at_ds = ATclosure_energy(segment1)
+    asymmetric_int_loop_dh = li_dh + asymmetry_correct_dh + mm_dh + at_dh
+    asymmetric_int_loop_ds = li_ds + asymmetry_correct_ds + mm_ds + at_ds
     return [asymmetric_int_loop_dh, asymmetric_int_loop_ds]
 
 def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultdict) -> list:
@@ -359,10 +384,7 @@ def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultd
     int_loop_ds = 0
     int_loop_dg = 0
 
-    # intermolecular initiation energy
-    ii_dh, ii_ds = intermolecular_initiation_energy()
-    int_loop_dh += ii_dh
-    int_loop_ds += ii_ds
+
     
     first_loop_length = len(segment1) - segment1.count("-") - 2
     second_loop_length = len(segment2) - segment2.count("-") - 2 
@@ -2361,6 +2383,10 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             print(f"stack {start}->{end}")
         # loop
         else:
+            # intermolecular initiation energy
+            ii_dh, ii_ds = intermolecular_initiation_energy()
+            dH += ii_dh
+            dS += ii_ds
             loop_idx = region_idx // 2
             loop_type = region_type_li[loop_idx]
             loop_length = end - start + 1
@@ -2391,7 +2417,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
 
 def main():
     duplex_str = "CAGACG\nGTAGGC"
-    # duplex_str = "CA--G--CG\nGTGAAAGGC"
+    duplex_str = "CA--G--CG\nGTGAAAGGC"
     loop_region_dict = loop_detective(duplex_str)
     calc_Tm_by_NN(duplex_str, loop_region_dict)
     
