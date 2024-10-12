@@ -152,7 +152,7 @@ def index_intl22(upstream_base: str, downstream_base: str, x_base1: str, y_base1
     
 def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int, int_loop_energy_dict: defaultdict) -> list:
     """对称的int loop结构直接读取矩阵数据累加"""
-    symmetric_int_loop_dh = symmetric_int_loop_dg = symmetric_int_loop_ds = 0
+    symmetric_int_loop_dh = symmetric_int_loop_dg = 0
     # base init
     upstream_base = segment1[0] 
     downstream_base = segment1[-1]
@@ -187,10 +187,9 @@ def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int, int_l
 def asymmetry_correct_energy(loop_diff_abs: int) -> list:
     asymmetry_dg = 0.4
     asymmetry_dh = 0
-    asymmetry_ds = ((asymmetry_dh - asymmetry_dg) / 310.15) * 1000
     asymmetry_correct_dh = asymmetry_dh * loop_diff_abs
-    asymmetry_correct_ds = asymmetry_ds * asymmetry_ds
-    return [asymmetry_correct_dh, asymmetry_correct_ds]
+    asymmetry_correct_dg = asymmetry_dg * loop_diff_abs
+    return [asymmetry_correct_dh, asymmetry_correct_dg]
 
 
 def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
@@ -224,10 +223,8 @@ def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
         5.6,
     ]
     initiation_dh = [0.0] * 27
-    initiation_ds = [
-        ((x - y) / 310.15) * 1000 for x, y in zip(initiation_dh, initiation_dg)
-    ]
-    return [initiation_dh[loop_sum - 4], initiation_ds[loop_sum - 4]]
+
+    return [initiation_dh[loop_sum - 4], initiation_dg[loop_sum - 4]]
 
 
 def asymmetric_int_loop_mismatch_energy(
@@ -303,9 +300,9 @@ def asymmetric_int_loop_mismatch_energy(
         ],
 ])
 
-    mismatch_dh = mismatch_dg = mismatch_ds = 0
-    mismatch1_dh = mismatch1_dg = mismatch1_ds = 0
-    mismatch2_dh = mismatch2_dg = mismatch2_ds = 0
+    mismatch_dh = mismatch_dg = 0
+    mismatch1_dh = mismatch1_dg = 0
+    mismatch2_dh = mismatch2_dg = 0
     # min loop length == 1,do NOT consider mismatch energy
     if int_loop_type[0] == 1:return [0.0, 0.0]
     # mismatch energy calc by segment
@@ -322,19 +319,16 @@ def asymmetric_int_loop_mismatch_energy(
     mismatch_dh = mismatch1_dh + mismatch2_dh
     mismatch_dg = mismatch1_dg + mismatch2_dg
     
-    mismatch_ds = ((mismatch_dh - mismatch_dg) / 310.15) * 1000
-    return [mismatch_dh, mismatch_ds]
+    return [mismatch_dh, mismatch_dg]
 
 
 def ATclosure_energy(segment1: str) -> list:
-    closure_AT_dh = closure_AT_ds = 0
+    closure_AT_dh = closure_AT_dg = 0
     if segment1[0] == "A" or segment1[0] == "T":
         closure_AT_dh += 3.2
-        closure_AT_ds += (3.2 / 310.15) * 1000
     if segment1[-1] == "A" or segment1[-1] == "T":
         closure_AT_dh += 3.2
-        closure_AT_ds += (3.2 / 310.15) * 1000
-    return [closure_AT_dh, closure_AT_ds]
+    return [closure_AT_dh, closure_AT_dg]
         
         
 
