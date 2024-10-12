@@ -47,75 +47,35 @@ def base2int(base: str) -> int:
 def stack_energy(segment: str) -> list:
     """近邻法计算stack的总能量值"""
     delta_h = [
-        79,
-        84,
-        78,
-        72,
-        72,
-        85,
-        80,
-        106,
-        78,
-        78,
-        82,
-        98,
-        80,
-        84,
-        80,
-        72,
-        82,
-        85,
-        79,
-        72,
-        72,
-        80,
-        78,
-        72,
-        72,
+        -7.2, -7.8, -5.8, -5.3, # AA AC AG AT
+        -9.9, -7.5, -9.8, -5.8, # CA CC CG CT
+        -8.5, -7.9, -7.5, -7.8, # GA GC GG GT
+        -6.7, -8.5, -9.9, -7.2  # TA TC TG TT
     ]
-    delta_s = [
-        222,
-        224,
-        210,
-        204,
-        224,
-        227,
-        199,
-        272,
-        210,
-        272,
-        222,
-        244,
-        199,
-        224,
-        244,
-        213,
-        222,
-        227,
-        222,
-        227,
-        168,
-        210,
-        220,
-        215,
-        220,
+    delta_g = [
+        -1.0, -1.4, -1.3, -0.9, # AA AC AG AT
+        -1.5, -1.8, -2.2, -1.3, # CA CC CG CT
+        -1.3, -2.2, -1.8, -1.4, # GA GC GG GT
+        -0.6, -1.3, -1.5, -1.0  # TA TC TG TT
     ]
-    delta_g = [(x - 310.15 * y) / 1000 for x, y in zip(delta_h, delta_s)]
+    delta_s = [(x - y) / 310.15 * 1000 for x, y in zip(delta_h, delta_g)]
     stack_dh = 0
     stack_ds = 0
     stack_dg = 0
     # print(delta_g)
     for i in range(len(segment) - 1):
         two_mer = segment[i] + segment[i + 1]
-        d_index = basen2int(two_mer)
+        d_index = base2int(two_mer)
         stack_dh += delta_h[d_index]
         stack_ds += delta_s[d_index]
+        stack_dg += delta_g[d_index]
+    print(f"stack dg is {stack_dg}")
     return [stack_dh, stack_ds]
 
 
 def intermolecular_initiation_energy() -> list:
     ii_dh = -7.2  # intermolecular initiation dh
-    ii_dg = -1.0  # intermolecular initiation dg
+    ii_dg = 1.0  # intermolecular initiation dg
     ii_ds = (ii_dh - ii_dg) / 310.15 * 1000  # intermolecular initiation ds
     return [ii_dh, ii_ds]
 
@@ -230,7 +190,7 @@ def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int, int_l
         external_index, internal_index = index_intl22(upstream_base, downstream_base, x_base1, y_base1, x_base2, y_base2)
         symmetric_int_loop_dh += int_loop_energy_dict["22dh"][external_index][internal_index]
         symmetric_int_loop_dg += int_loop_energy_dict["22dg"][external_index][internal_index]
-    
+    print(f"symmetric_int_loop_dg is {symmetric_int_loop_dg}")
     symmetric_int_loop_ds = ((symmetric_int_loop_dh - symmetric_int_loop_dg) / 310.15) * 1000
     
     return [symmetric_int_loop_dh, symmetric_int_loop_ds]
@@ -399,6 +359,11 @@ def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultd
     int_loop_ds = 0
     int_loop_dg = 0
 
+    # intermolecular initiation energy
+    ii_dh, ii_ds = intermolecular_initiation_energy()
+    int_loop_dh += ii_dh
+    int_loop_ds += ii_ds
+    
     first_loop_length = len(segment1) - segment1.count("-") - 2
     second_loop_length = len(segment2) - segment2.count("-") - 2 
     loop_sum = first_loop_length + second_loop_length
@@ -2366,7 +2331,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
 ])
 
     # init variable
-    dH = dS = 0
+    dH = dS = dG = 0
     
     
 
@@ -2387,7 +2352,9 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             # if stack length > 1, participate energy calc
             if stack_length > 1:
                 segment = seq1[start : end + 1]
+                print(segment)
                 stack_dh, stack_ds = stack_energy(segment)
+                print(f"stack_dh is {stack_dh}")
                 dH += stack_dh
                 dS += stack_ds
             print(f"stack {start}->{end}")
@@ -2407,15 +2374,17 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
                 segment2 = seq2[start - 1:end + 2]
                 print(segment2)
                 int_loop_dh, int_loop_ds = int_loop_energy(segment1, segment2, int_loop_energy_dict)
+                print(f"int_loop_dh is {int_loop_dh}")
                 dH += int_loop_dh
                 dS += int_loop_ds
                 print(f"intloop {start} -> {end}")   
         region_idx += 1       
         
     # calc Tm
-    
+    print(f"dS is {dS}")
+    print(f"dH is {dH}")
 
 
 if __name__ == "__main__":
-    loop_region_dict = loop_detective("GCTAGCATCGTA--GCTCGA\nCGTAGCTGATGCTTGTAGCT")
-    calc_Tm_by_NN("GCTAGCATCGTA--GCTCGA\nCGTAGCTGATGCTTGTAGCT", loop_region_dict)
+    loop_region_dict = loop_detective("CAGACG\nGTAGGC")
+    calc_Tm_by_NN("CAGACG\nGTAGGC", loop_region_dict)
