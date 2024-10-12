@@ -376,7 +376,9 @@ def asymmetric_int_loop_energy(
     asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy(loop_diff_abs)
     # mismatch energy
     mm_dh, mm_ds = asymmetric_int_loop_mismatch_energy(segment1, segment2, loop_type)
-    return [0,0]
+    asymmetric_int_loop_dh = ii_dh + li_dh + asymmetry_correct_dh + mm_dh
+    asymmetric_int_loop_ds = ii_ds + li_ds + asymmetry_correct_ds + mm_ds
+    return [asymmetric_int_loop_dh, asymmetric_int_loop_ds]
 
 def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultdict) -> list:
     """对intloop进行分型并计算能量"""
@@ -2392,8 +2394,8 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
                 segment2 = seq2[start - 1:end + 2]
                 print(segment2)
                 int_loop_dh, int_loop_ds = int_loop_energy(segment1, segment2, int_loop_energy_dict)
-                # dH += int_loop_dh
-                # dS += int_loop_ds
+                dH += int_loop_dh
+                dS += int_loop_ds
                 print(f"intloop {start} -> {end}")
 
         region_idx += 1
