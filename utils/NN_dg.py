@@ -115,9 +115,12 @@ def bulge_energy(segment: str, bulge_length: int) -> list:
     bulge_loop_dh = bulge_loop_dict["dh"][bulge_length - 1]
     bulge_loop_dg = bulge_loop_dict["dg"][bulge_length - 1]
     
-    # bulge length == 1,extra stack energy
+    # bulge length == 1,extra stack energy and - RT ln(number of states)
     
     # AT closure
+    at_dh, at_dg = ATclosure_energy(segment)
+    bulge_loop_dh += at_dh
+    bulge_loop_dg += at_dg
     
     return [bulge_loop_dh, bulge_loop_dg]
 
@@ -2394,6 +2397,7 @@ def main():
     duplex_str = "CA--G--CG\nGTGAAAGGC"
     duplex_str = "CA-GACG\nGTGAGGC"
     duplex_str = "GCCCG\nCGG-C"
+    duplex_str = "GAACAG\nCT---C"
     loop_region_dict = loop_detective(duplex_str)
     calc_Tm_by_NN(duplex_str, loop_region_dict)
     
