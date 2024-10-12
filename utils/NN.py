@@ -205,11 +205,12 @@ def index_intl22(upstream_base: str, downstream_base: str, x_base1: str, y_base1
     return [external_index, internal_index]
     
     
-def symmetric_int_loop_energy(segment1: str, segment2: str, loop_type: list) -> list:
+def symmetric_int_loop_energy(segment1: str, segment2: str, loop_type: list, int_loop_energy_dict: defaultdict) -> list:
     """对称的int loop结构直接读取矩阵数据累加即可"""
-    symmetric_int_loop_dh = symmetric_int_loop_ds = 0
+    symmetric_int_loop_dh = symmetric_int_loop_dg = symmetric_int_loop_ds = 0
     
-    # loop type 
+    # base init
+     
     
     # 1 * 1
     if loop_type[0] == loop_type[1] == 1:
@@ -217,12 +218,18 @@ def symmetric_int_loop_energy(segment1: str, segment2: str, loop_type: list) -> 
        downstream_base = segment1[-1]
        x_base = segment1[1]
        y_base = segment2[1]
-       intl11_dh, intl11_ds = index_intl11(upstream_base, downstream_base, x_base, y_base)
-       symmetric_int_loop_dh += intl11_dh
-       symmetric_int_loop_ds += intl11_ds
+       external_index, internal_index = index_intl11(upstream_base, downstream_base, x_base, y_base)
+       symmetric_int_loop_dh += int_loop_energy_dict["11dh"][external_index][internal_index]
+       symmetric_int_loop_dg += int_loop_energy_dict["11dg"][external_index][internal_index]
     # 1 * 2
     elif loop_type[0] == 1 and loop_type[1] == 2:
-        ...
+        upstream_base = segment1[0] 
+        downstream_base = segment1[-1]
+        x_base = segment1[1]
+        y_base = segment2[1]
+        y_neibor_base = segment2[2]
+        external_index, internal_index = index_intl21(upstream_base, downstream_base, x_base, y_base, y_neibor_base)
+        
     # 2 * 2
     else:
         ...
@@ -354,7 +361,7 @@ def asymmetric_int_loop_mismatch_energy(
     # min loop length == 1,do NOT consider mismatch energy
     if int_loop_type[0] == 1:return [0.0, 0.0]
     # mismatch energy calc by segment
-    
+    return [0,0]
 
 def asymmetric_int_loop_energy(
     segment1: str, segment2: str, loop_sum: int, loop_diff_abs: int, loop_type: list
@@ -368,16 +375,16 @@ def asymmetric_int_loop_energy(
     asymmetry_correct_dh, asymmetry_correct_ds = asymmetry_correct_energy(loop_diff_abs)
     # mismatch energy
     mm_dh, mm_ds = asymmetric_int_loop_mismatch_energy(segment1, segment2, loop_type)
+    return [0,0]
 
-
-def int_loop_energy(segment1: str, segment2: str) -> list:
+def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultdict) -> list:
     """对intloop进行分型并计算能量"""
     int_loop_dh = 0
     int_loop_ds = 0
     int_loop_dg = 0
 
-    first_loop_length = len(segment1) - segment1.count("-")
-    second_loop_length = len(segment2) - segment2.count("-")
+    first_loop_length = len(segment1) - segment1.count("-") - 2
+    second_loop_length = len(segment2) - segment2.count("-") - 2 
     loop_sum = first_loop_length + second_loop_length
     max_loop_length = max(first_loop_length, second_loop_length)
     min_loop_length = loop_sum - max_loop_length
@@ -386,7 +393,7 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
 
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
-        symmetric_int_loop_dh, symmetric_int_loop_ds = symmetric_int_loop_energy(segment1, segment2, loop_type)
+        symmetric_int_loop_dh, symmetric_int_loop_ds = symmetric_int_loop_energy(segment1, segment2, loop_type, int_loop_energy_dict)
         int_loop_dh += symmetric_int_loop_dh
         int_loop_ds += symmetric_int_loop_ds
     # Other Internal Loops
@@ -2379,9 +2386,13 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
                 dS += bulge_ds
                 print(f"bulge {start} -> {end}")
             else:  # int loop
-                int_loop_dh, int_loop_ds = int_loop_energy()
-                dH += int_loop_dh
-                dS += int_loop_ds
+                segment1 = seq1[start - 1:end + 2]
+                print(segment1)
+                segment2 = seq2[start - 1:end + 2]
+                print(segment2)
+                int_loop_dh, int_loop_ds = int_loop_energy(segment1, segment2, int_loop_energy_dict)
+                # dH += int_loop_dh
+                # dS += int_loop_ds
                 print(f"intloop {start} -> {end}")
 
         region_idx += 1
