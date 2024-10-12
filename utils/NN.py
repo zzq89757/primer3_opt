@@ -2383,6 +2383,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     # calc Tm
     print(f"dS is {dS}")
     print(f"dH is {dH}")
+    
 
 
 if __name__ == "__main__":
