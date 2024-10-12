@@ -1,4 +1,5 @@
 from collections import defaultdict, deque
+from math import log
 
 
 def loop_detective(duplex_str: str) -> defaultdict:
@@ -2332,7 +2333,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
 
     # init variable
     dH = dS = dG = 0
-    
+    base = 4000000000
     
 
     seq1, seq2 = duplex_str.split("\n")
@@ -2383,7 +2384,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     # calc Tm
     print(f"dS is {dS}")
     print(f"dH is {dH}")
-    
+    Tm = dH / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
 
 
 if __name__ == "__main__":
