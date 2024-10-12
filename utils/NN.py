@@ -206,7 +206,7 @@ def index_intl22(upstream_base: str, downstream_base: str, x_base1: str, y_base1
     
     
 def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int, int_loop_energy_dict: defaultdict) -> list:
-    """对称的int loop结构直接读取矩阵数据累加即可"""
+    """对称的int loop结构直接读取矩阵数据累加"""
     symmetric_int_loop_dh = symmetric_int_loop_dg = symmetric_int_loop_ds = 0
     # base init
     upstream_base = segment1[0] 
