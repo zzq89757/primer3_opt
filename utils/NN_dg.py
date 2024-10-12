@@ -2353,12 +2353,9 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             # if stack length > 1, participate energy calc
             if stack_length > 1:
                 segment = seq1[start : end + 1]
-                print(segment)
                 stack_dh, stack_dg = stack_energy(segment)
-                print(f"stack_dh is {stack_dh}")
                 dH += stack_dh
                 dG += stack_dg
-            print(f"stack {start}->{end}")
         # loop
         else:
             # intermolecular initiation energy
@@ -2369,27 +2366,22 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             loop_type = region_type_li[loop_idx]
             loop_length = end - start + 1
             segment1 = seq1[start - 1:end + 2]
-            print(segment1)
             segment2 = seq2[start - 1:end + 2]
-            print(segment2)
             if not loop_type:  # bulge
                 bulge_dh, bulge_dg = bulge_energy(segment1, loop_length)
                 dH += bulge_dh
                 dG += bulge_dg
-                print(f"bulge {start} -> {end}")
             else:  # int loop
                 int_loop_dh, int_loop_dg = int_loop_energy(segment1, segment2, int_loop_energy_dict)
-                print(f"int_loop_dh is {int_loop_dh}")
                 dH += int_loop_dh
-                dG += int_loop_dg
-                print(f"intloop {start} -> {end}")   
+                dG += int_loop_dg 
         region_idx += 1       
         
     # calc Tm
     print(f"\ndG is {dG}")
     print(f"dH is {dH}")
     dS = (dH - dG) / 310.15 * 1000
-    print(dS)
+    print(f"dS is {dS}")
     Tm = dH * 1000 / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
     print(f"Tm is {Tm}")
 
