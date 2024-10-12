@@ -205,36 +205,37 @@ def index_intl22(upstream_base: str, downstream_base: str, x_base1: str, y_base1
     return [external_index, internal_index]
     
     
-def symmetric_int_loop_energy(segment1: str, segment2: str, loop_type: list, int_loop_energy_dict: defaultdict) -> list:
+def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int, int_loop_energy_dict: defaultdict) -> list:
     """对称的int loop结构直接读取矩阵数据累加即可"""
     symmetric_int_loop_dh = symmetric_int_loop_dg = symmetric_int_loop_ds = 0
-    
     # base init
-     
+    upstream_base = segment1[0] 
+    downstream_base = segment1[-1]
+    x_base = segment1[1]
+    y_base = segment2[1]
     
     # 1 * 1
-    if loop_type[0] == loop_type[1] == 1:
-       upstream_base = segment1[0] 
-       downstream_base = segment1[-1]
-       x_base = segment1[1]
-       y_base = segment2[1]
+    if loop_sum == 2:
        external_index, internal_index = index_intl11(upstream_base, downstream_base, x_base, y_base)
        symmetric_int_loop_dh += int_loop_energy_dict["11dh"][external_index][internal_index]
        symmetric_int_loop_dg += int_loop_energy_dict["11dg"][external_index][internal_index]
     # 1 * 2
-    elif loop_type[0] == 1 and loop_type[1] == 2:
-        upstream_base = segment1[0] 
-        downstream_base = segment1[-1]
-        x_base = segment1[1]
-        y_base = segment2[1]
+    elif loop_sum == 3:
         y_neibor_base = segment2[2]
         external_index, internal_index = index_intl21(upstream_base, downstream_base, x_base, y_base, y_neibor_base)
-        
+        symmetric_int_loop_dh += int_loop_energy_dict["21dh"][external_index][internal_index]
+        symmetric_int_loop_dg += int_loop_energy_dict["21dg"][external_index][internal_index]
     # 2 * 2
     else:
-        ...
-       
-       
+        x_base1 = x_base
+        x_base2 = y_base
+        y_base1 = segment1[2]
+        y_base2 = segment2[2]
+        external_index, internal_index = index_intl22(upstream_base, downstream_base, x_base1, y_base1, x_base2, y_base2)
+        symmetric_int_loop_dh += int_loop_energy_dict["22dh"][external_index][internal_index]
+        symmetric_int_loop_dg += int_loop_energy_dict["22dg"][external_index][internal_index]
+    
+    symmetric_int_loop_ds = ((symmetric_int_loop_dh - symmetric_int_loop_dg) / 310.15) * 1000
     
     return [symmetric_int_loop_dh, symmetric_int_loop_ds]
 
@@ -393,7 +394,7 @@ def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultd
 
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
-        symmetric_int_loop_dh, symmetric_int_loop_ds = symmetric_int_loop_energy(segment1, segment2, loop_type, int_loop_energy_dict)
+        symmetric_int_loop_dh, symmetric_int_loop_ds = symmetric_int_loop_energy(segment1, segment2, loop_sum, int_loop_energy_dict)
         int_loop_dh += symmetric_int_loop_dh
         int_loop_ds += symmetric_int_loop_ds
     # Other Internal Loops
