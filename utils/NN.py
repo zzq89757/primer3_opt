@@ -287,7 +287,7 @@ def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
 
 
 def asymmetric_int_loop_mismatch_energy(
-    segment1: str, segmnet2: str, int_loop_type: list
+    segment1: str, segment2: str, int_loop_type: list
 ) -> list:
     """只有非对称且min loop > 1 才考虑mismatch"""
     mm_dg = deque([
@@ -366,11 +366,19 @@ def asymmetric_int_loop_mismatch_energy(
     if int_loop_type[0] == 1:return [0.0, 0.0]
     # mismatch energy calc by segment
     external_index = base2int(segment1[0])
-    internal_index = base2int(segment1[1] + segmnet2[1])
+    internal_index = base2int(segment1[1] + segment2[1])
     mismatch1_dh = mm_dh[external_index][internal_index]
     mismatch1_dg = mm_dg[external_index][internal_index]
     
+    external_index = base2int(segment2[-1])
+    internal_index = base2int(segment2[-2] + segment1[-2])
+    mismatch2_dh = mm_dh[external_index][internal_index]
+    mismatch2_dg = mm_dg[external_index][internal_index]
     
+    mismatch_dh = mismatch1_dh + mismatch2_dh
+    mismatch_dg = mismatch1_dg + mismatch2_dg
+    
+    mismatch_ds = ((mismatch_dh - mismatch_dg) / 310.15) * 1000
     return [mismatch_dh, mismatch_ds]
 
 def asymmetric_int_loop_energy(
