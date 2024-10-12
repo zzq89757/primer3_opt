@@ -2409,9 +2409,11 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
                 int_loop_dh, int_loop_ds = int_loop_energy(segment1, segment2, int_loop_energy_dict)
                 dH += int_loop_dh
                 dS += int_loop_ds
-                print(f"intloop {start} -> {end}")
-
-        region_idx += 1
+                print(f"intloop {start} -> {end}")   
+        region_idx += 1       
+        
+    # calc Tm
+    
 
 
 if __name__ == "__main__":
