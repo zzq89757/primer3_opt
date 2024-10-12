@@ -70,48 +70,8 @@ def intermolecular_initiation_energy() -> list:
     return [ii_dh, ii_dg]
 
 
-def bulge_initiation_energy(bulge_length: int) -> list:
-    bulge_initiation_dg_table = deque([
-        2.9,
-        2.3,
-        2.5,
-        2.7,
-        3.0,
-        3.2,
-        3.4,
-        3.5,
-        3.6,
-        3.7,
-        3.9,
-        3.9,
-        4.0,
-        4.1,
-        4.2,
-        4.3,
-        4.3,
-        4.4,
-        4.4,
-        4.5,
-        4.5,
-        4.6,
-        4.6,
-        4.7,
-        4.7,
-        4.7,
-        4.8,
-        4.9,
-        4.9,
-        4.9,
-	])
 
-    bulge_initiation_dh_table = deque([18.9, -0.6, -2.3] + [-14.1] * 27)
-    
-    bulge_initiation_dg = bulge_initiation_dg_table[bulge_length - 1]
-    bulge_initiation_dh = bulge_initiation_dh_table[bulge_length - 1]
-    
-    return [bulge_initiation_dh, bulge_initiation_dg]
-
-def bulge_energy(bulge_length: int) -> list:
+def bulge_energy(segment: str, bulge_length: int) -> list:
     """计算不同长度bulge的总能量值"""
     
     # bulge loop dh dg
@@ -152,10 +112,12 @@ def bulge_energy(bulge_length: int) -> list:
         ]
     )
     
-    bulge_initiation_dh, bulge_initiation_dg = bulge_initiation_energy(bulge_length)
+    bulge_loop_dh = bulge_loop_dict["dh"][bulge_length - 1]
+    bulge_loop_dg = bulge_loop_dict["dg"][bulge_length - 1]
     
-    bulge_loop_dh = bulge_loop_dict["dh"][bulge_length - 1] + bulge_initiation_dh
-    bulge_loop_dg = bulge_loop_dict["dg"][bulge_length - 1] + bulge_initiation_dg
+    # bulge length == 1,extra stack energy
+    
+    # AT closure
     
     return [bulge_loop_dh, bulge_loop_dg]
 
@@ -2403,16 +2365,16 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             loop_idx = region_idx // 2
             loop_type = region_type_li[loop_idx]
             loop_length = end - start + 1
+            segment1 = seq1[start - 1:end + 2]
+            print(segment1)
+            segment2 = seq2[start - 1:end + 2]
+            print(segment2)
             if not loop_type:  # bulge
-                bulge_dh, bulge_dg = bulge_energy(loop_length)
+                bulge_dh, bulge_dg = bulge_energy(segment1, loop_length)
                 dH += bulge_dh
                 dG += bulge_dg
                 print(f"bulge {start} -> {end}")
             else:  # int loop
-                segment1 = seq1[start - 1:end + 2]
-                print(segment1)
-                segment2 = seq2[start - 1:end + 2]
-                print(segment2)
                 int_loop_dh, int_loop_dg = int_loop_energy(segment1, segment2, int_loop_energy_dict)
                 print(f"int_loop_dh is {int_loop_dh}")
                 dH += int_loop_dh
