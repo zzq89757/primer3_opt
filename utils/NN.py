@@ -159,16 +159,12 @@ def bulge_energy(bulge_length: int) -> list:
             4.9,
         ]
     )
-    bulge_loop_dict["ds"] = deque(
-        [
-            ((_dh - _dg) / 310.15) * 1000
-            for _dh, _dg in zip(bulge_loop_dict["dh"], bulge_loop_dict["dg"])
-        ]
-    )
-    return [
-        bulge_loop_dict["dh"][bulge_length - 1],
-        bulge_loop_dict["ds"][bulge_length - 1],
-    ]
+    
+    bulge_loop_dh = bulge_loop_dict["dh"][bulge_length - 1]
+    bulge_loop_dg = bulge_loop_dict["dg"][bulge_length - 1]
+    bulge_loop_ds = ((bulge_loop_dh - bulge_loop_dg) / 310.15) * 1000
+    
+    return [bulge_loop_dh, bulge_loop_ds]
 
 
 def index_intl11(upstream_base: str, downstream_base: str, x_base: str, y_base: str) -> list:
