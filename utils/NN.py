@@ -205,9 +205,29 @@ def index_intl22(upstream_base: str, downstream_base: str, x_base1: str, y_base1
     return [external_index, internal_index]
     
     
-def symmetric_int_loop_energy(loop_type: list) -> list:
+def symmetric_int_loop_energy(segment1: str, segment2: str, loop_type: list) -> list:
     """对称的int loop结构直接读取矩阵数据累加即可"""
     symmetric_int_loop_dh = symmetric_int_loop_ds = 0
+    
+    # loop type 
+    
+    # 1 * 1
+    if loop_type[0] == loop_type[1] == 1:
+       upstream_base = segment1[0] 
+       downstream_base = segment1[-1]
+       x_base = segment1[1]
+       y_base = segment2[1]
+       intl11_dh, intl11_ds = index_intl11(upstream_base, downstream_base, x_base, y_base)
+       symmetric_int_loop_dh += intl11_dh
+       symmetric_int_loop_ds += intl11_ds
+    # 1 * 2
+    elif loop_type[0] == 1 and loop_type[1] == 2:
+        ...
+    # 2 * 2
+    else:
+        ...
+       
+       
     
     return [symmetric_int_loop_dh, symmetric_int_loop_ds]
 
@@ -366,7 +386,7 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
 
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
-        symmetric_int_loop_dh, symmetric_int_loop_ds = symmetric_int_loop_energy(loop_type)
+        symmetric_int_loop_dh, symmetric_int_loop_ds = symmetric_int_loop_energy(segment1, segment2, loop_type)
         int_loop_dh += symmetric_int_loop_dh
         int_loop_ds += symmetric_int_loop_ds
     # Other Internal Loops
