@@ -363,7 +363,8 @@ def asymmetric_int_loop_mismatch_energy(
     # min loop length == 1,do NOT consider mismatch energy
     if int_loop_type[0] == 1:return [0.0, 0.0]
     # mismatch energy calc by segment
-    
+    external_index = base2int(segment1[0])
+    internal_index = base2int(segment1[1] + segmnet2[1])
     return [mismatch_dh, mismatch_ds]
 
 def asymmetric_int_loop_energy(
