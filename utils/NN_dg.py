@@ -112,8 +112,8 @@ def bulge_energy(segment: str, bulge_length: int) -> list:
         ]
     )
     
-    bulge_loop_dh = bulge_loop_dict["dh"][bulge_length - 1]
-    bulge_loop_dg = bulge_loop_dict["dg"][bulge_length - 1]
+    bulge_loop_dh = bulge_loop_dict["dh"][bulge_length - 1] if bulge_length <= 30 else bulge_loop_dict["dh"][-1]
+    bulge_loop_dg = bulge_loop_dict["dg"][bulge_length - 1] if bulge_length <= 30 else bulge_loop_dict["dg"][-1]
     
     # bulge length == 1,extra stack energy and - RT ln(number of states)
     
