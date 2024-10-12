@@ -171,6 +171,40 @@ def bulge_energy(bulge_length: int) -> list:
     ]
 
 
+def index_intl11(upstream_base: str, downstream_base: str, x_base: str, y_base: str) -> list:
+    """
+    		X
+		   A T
+		   T A
+		    Y
+    """ 
+    external_index = base2int(upstream_base + downstream_base)
+    internal_index = base2int(x_base + y_base)
+    return [external_index, internal_index]
+
+
+def index_intl21(upstream_base: str, downstream_base: str, x_base: str, y_base: str, y_neibor_base: str) -> list:
+    """		    
+            X
+		   A  A
+		   T  T
+		    YA
+    """
+    external_index = base2int(y_neibor_base + upstream_base + downstream_base)
+    internal_index = base2int(x_base + y_base)
+    return [external_index, internal_index]
+
+
+def index_intl22(upstream_base: str, downstream_base: str, x_base1: str, y_base1: str, x_base2: str, y_base2: str) -> list:
+    """
+    	A X1 Y1 A
+	    T X2 Y2 T
+    """
+    external_index = base2int(upstream_base + downstream_base)
+    internal_index = base2int(x_base1 + x_base2 + y_base1 + y_base2)
+    return [external_index, internal_index]
+    
+    
 def symmetric_int_loop_energy(loop_type: list) -> list:
     """对称的int loop结构直接读取矩阵数据累加即可"""
     symmetric_int_loop_dh = symmetric_int_loop_ds = 0
@@ -2287,7 +2321,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
 			-1.8,-1.8,-1.8,-1.8,-0.6,-0.6,-0.6,-0.6,-1.1,-1.1,-1.1,-1.1,-1.5,-1.5,-1.5,-1.5,
 		],
 ])
-    
+
     # init variable
     dH = dS = 0
     
