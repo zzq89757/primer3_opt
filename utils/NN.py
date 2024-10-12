@@ -359,10 +359,12 @@ def asymmetric_int_loop_mismatch_energy(
         ],
 ])
 
+    mismatch_dh = mismatch_dg = mismatch_ds = 0
     # min loop length == 1,do NOT consider mismatch energy
     if int_loop_type[0] == 1:return [0.0, 0.0]
     # mismatch energy calc by segment
-    return [0,0]
+    
+    return [mismatch_dh, mismatch_ds]
 
 def asymmetric_int_loop_energy(
     segment1: str, segment2: str, loop_sum: int, loop_diff_abs: int, loop_type: list
