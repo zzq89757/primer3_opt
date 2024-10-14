@@ -93,7 +93,7 @@ def states_correction_dg(seq: str, bulge_pos: int) -> float:
     return -0.616 * log(state_num)
 
 
-def bulge_energy(segment: str, bulge_length: int) -> list:
+def bulge_energy(segment: str, bulge_length: int, seq: str, bulge_pos: int) -> list:
     """计算不同长度bulge的总能量值"""
     
     # bulge loop inition
@@ -143,6 +143,7 @@ def bulge_energy(segment: str, bulge_length: int) -> list:
         ex_stack_dh, ex_stack_dg = stack_energy(segment[0] + segment[-1])
         # states correction
         states_dg = states_correction_dg(seq, bulge_pos)
+        # print(f"{ex_stack_dg} is ex_stack_dg")
         bulge_loop_dh += ex_stack_dh
         bulge_loop_dg += ex_stack_dg + states_dg
     else:
@@ -405,6 +406,16 @@ def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultd
     loop_type = [min_loop_length, max_loop_length]
     is_symmetric = loop_sum <= 4 and max_loop_length < 3
 
+    # 2 x 1, reverse
+    if loop_sum == 3:
+        if first_loop_length == 2:
+            tmp = segment1[::-1]
+            segment1 = segment2[::-1]
+            segment2 = tmp
+        # ensure - in -2
+        if segment1[-2] != "-":
+            segment1 = segment1[0] + segment1[-2] + "-" + segment1[-1]
+    
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
         symmetric_int_loop_dh, symmetric_int_loop_dg = symmetric_int_loop_energy(segment1, segment2, loop_sum, int_loop_energy_dict)
@@ -2424,8 +2435,10 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             loop_length = end - start + 1
             segment1 = seq1[start - 1:end + 2]
             segment2 = seq2[start - 1:end + 2]
+            segment = segment2 if segment1.count("-") else segment1
+            seq = seq2[::-1] if segment1.count("-") else seq1
             if not loop_type:  # bulge
-                bulge_dh, bulge_dg = bulge_energy(segment1, loop_length)
+                bulge_dh, bulge_dg = bulge_energy(segment, loop_length, seq, start)
                 dH += bulge_dh
                 dG += bulge_dg
             else:  # int loop
@@ -2486,11 +2499,11 @@ def main():
     duplex_str = "CA--G--CG\nGTGAAAGGC"
     duplex_str = "CA-GACG\nGTGAGGC"
     duplex_str = "GCCCG\nCGG-C"
-    duplex_str = "GAACAG\nCT---C"
-    duplex_str = "TAAACTGCC-----GGCAGTACATC\nATTTGACGGGTGAACCGTCATGTAG"
-    duplex_str = "CCCTATT---------------------------ATTGACGTCAATA\nGGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTAT"
-    duplex_str = "GGCCGGAGTAAGCTGACAT\nCCGGCCTCATTCGACTGTA"
-    duplex_str = "AAAAAAAAAA\nTTTTTTTTTT"
+    # duplex_str = "GAACAG\nCT---C"
+    # duplex_str = "TAAACTGCC-----GGCAGTACATC\nATTTGACGGGTGAACCGTCATGTAG"
+    # duplex_str = "CCCTATT---------------------------ATTGACGTCAATA\nGGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTAT"
+    # duplex_str = "GGCCGGAGTAAGCTGACAT\nCCGGCCTCATTCGACTGTA"
+    # duplex_str = "AAAAAAAAAA\nTTTTTTTTTT"
     loop_region_dict = loop_detective(duplex_str)
     calc_Tm_by_NN(duplex_str, loop_region_dict)
     
