@@ -130,6 +130,10 @@ def bulge_energy(segment: str, bulge_length: int) -> list:
         at_dh, at_dg = ATclosure_energy(segment)
         bulge_loop_dh += at_dh
         bulge_loop_dg += at_dg
+        
+        # n > 6,bulge_loop_dg += 1.75 RT ln(n/6)
+        if bulge_length > 6:
+            bulge_loop_dg += 1.75 * 0.616 * log(bulge_length / 6)
     
     return [bulge_loop_dh, bulge_loop_dg]
 
