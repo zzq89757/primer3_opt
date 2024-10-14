@@ -2440,7 +2440,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             dH += 100
     
     
-    GC_count = 0 if formamide_conc == 0.0 else str.count(seq1,"C") + str.count(seq1,"G")
+    GC_count = str.count(seq1,"C") + str.count(seq1,"G")
     K_mM += divalent_to_monovalent(divalent,dntp)
     dS += 0.368 * (len(seq1) - 1) * log(K_mM / 1000.0 )
 
