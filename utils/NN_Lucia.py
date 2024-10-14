@@ -2459,6 +2459,7 @@ def main():
     duplex_str = "TAAACTGCC-----GGCAGTACATC\nATTTGACGGGTGAACCGTCATGTAG"
     duplex_str = "CCCTATT---------------------------ATTGACGTCAATA\nGGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTAT"
     duplex_str = "GGCCGGAGTAAGCTGACAT\nCCGGCCTCATTCGACTGTA"
+    duplex_str = "AAAAAAAAAA\nTTTTTTTTTT"
     loop_region_dict = loop_detective(duplex_str)
     calc_Tm_by_NN(duplex_str, loop_region_dict)
     
