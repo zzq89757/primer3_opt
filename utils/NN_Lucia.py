@@ -72,6 +72,26 @@ def intermolecular_initiation_energy() -> list:
     return [ii_dh, ii_dg]
 
 
+def states_correction_dg(seq: str, bulge_pos: int) -> float:
+    state_num = 1
+    # get number of states
+    bulge_base = seq[bulge_pos]
+    forward_idx = bulge_pos
+    afterward_idx = bulge_pos
+    while forward_idx != 0 and afterward_idx != len(seq) - 1:
+        if forward_idx != 0 and seq[forward_idx] == bulge_base:
+            state_num += 1
+            forward_idx += 1
+        else:
+            forward_idx = 0
+        
+        if afterward_idx != len(seq) - 1 and seq[afterward_idx] == bulge_base :
+            state_num += 1
+            afterward_idx += 1
+        else:
+            afterward_idx = len(seq) - 1  
+    return -0.616 * log(state_num)
+
 
 def bulge_energy(segment: str, bulge_length: int) -> list:
     """计算不同长度bulge的总能量值"""
@@ -122,9 +142,9 @@ def bulge_energy(segment: str, bulge_length: int) -> list:
         # extra stack energy 
         ex_stack_dh, ex_stack_dg = stack_energy(segment[0] + segment[-1])
         # states correction
-        
+        states_dg = states_correction_dg(seq, bulge_pos)
         bulge_loop_dh += ex_stack_dh
-        bulge_loop_dg += ex_stack_dg
+        bulge_loop_dg += ex_stack_dg + states_dg
     else:
         # AT closure
         at_dh, at_dg = ATclosure_energy(segment)
