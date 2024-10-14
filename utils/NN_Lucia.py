@@ -76,7 +76,7 @@ def intermolecular_initiation_energy() -> list:
 def bulge_energy(segment: str, bulge_length: int) -> list:
     """计算不同长度bulge的总能量值"""
     
-    # bulge loop dh dg
+    # bulge loop inition
     bulge_loop_dict = defaultdict(deque)
     bulge_loop_dict["dh"] = deque([18.9, -0.6, -2.3] + [-14.1] * 27)
     bulge_loop_dict["dg"] = deque(
