@@ -117,12 +117,19 @@ def bulge_energy(segment: str, bulge_length: int) -> list:
     bulge_loop_dh = bulge_loop_dict["dh"][bulge_length - 1] if bulge_length <= 30 else bulge_loop_dict["dh"][-1]
     bulge_loop_dg = bulge_loop_dict["dg"][bulge_length - 1] if bulge_length <= 30 else bulge_loop_dict["dg"][-1]
     
-    # bulge length == 1,extra stack energy and - RT ln(number of states)
-    
-    # AT closure
-    at_dh, at_dg = ATclosure_energy(segment)
-    bulge_loop_dh += at_dh
-    bulge_loop_dg += at_dg
+    # bulge length == 1,extra stack energy(bulge in 2 or -2) and - RT ln(number of states) and no AT panalty
+    if bulge_length == 1:
+        # extra stack energy 
+        ex_stack_dh, ex_stack_dg = stack_energy(segment[0] + segment[-1])
+        # states correction
+        
+        bulge_loop_dh += ex_stack_dh
+        bulge_loop_dg += ex_stack_dg
+    else:
+        # AT closure
+        at_dh, at_dg = ATclosure_energy(segment)
+        bulge_loop_dh += at_dh
+        bulge_loop_dg += at_dg
     
     return [bulge_loop_dh, bulge_loop_dg]
 
