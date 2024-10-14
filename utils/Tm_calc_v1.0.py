@@ -26,8 +26,8 @@ def print_energy():
             if cycle == 4:
                 print("# TA TC TG TT")
             
-print_energy()
-exit()
+# print_energy()
+# exit()
 
 delta_h = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
 delta_s = [222, 224, 210, 204, 224, 227, 199, 272, 210, 272, 222, 244, 199, 224, 244, 213, 222, 227, 222, 227, 168, 210, 220, 215, 220]
@@ -114,18 +114,21 @@ def calc_tm(seq:str):
     
 
     # calculate delta by NN 
+    stack_dh = stack_ds = 0
     for i,s in enumerate(seq):
         if  i == 0 :continue
         two_mer = seq[i-1] + s
         d_index = base2int(two_mer)
         dh += delta_h[d_index]
+        stack_dh += delta_h[d_index]
         ds += delta_s[d_index]
-        
+        stack_ds += delta_s[d_index]
+    print(f"stack_dh is {stack_dh}")
+    print(f"stack_ds is {stack_ds}")
     
     # init value and salt corrections and calculate Tm finally
     dh *= -100
     ds *= -0.1
-
     GC_count = 0 if formamide_conc == 0.0 else str.count(seq,"C") + str.count(seq,"G")
     K_mM += divalent_to_monovalent(divalent,dntp)
     ds=ds + 0.368 * (len(seq) - 1) * log(K_mM / 1000.0 )

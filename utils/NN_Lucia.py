@@ -1,5 +1,5 @@
 from collections import defaultdict, deque
-from math import log
+from math import log, sqrt
 
 
 def loop_detective(duplex_str: str) -> defaultdict:
@@ -389,6 +389,30 @@ def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultd
         int_loop_dg += asymmetric_int_loop_dg
 
     return [int_loop_dh, int_loop_dg]
+
+
+def symmetry(seq):
+    '''
+    Return 1 if string is symmetrical, 0 otherwise.
+    '''
+    seq_len = len(seq)
+    mp = seq_len // 2
+    if seq_len % 2 == 1:return 0
+    for i in range(mp):
+        s = seq[i]
+        e = seq[seq_len - i - 1]
+        terminal_base_set={s,e}
+        if terminal_base_set != {"A","T"} and terminal_base_set != {"C","G"}:return 0
+    return 1
+
+
+def divalent_to_monovalent(divalent,dntp):
+    '''
+    Convert divalent salt concentration to monovalent
+    '''
+    if divalent == 0:dntp = 0
+    if divalent < dntp:divalent = dntp
+    return 120 * sqrt((divalent - dntp))
 
 
 def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
@@ -2334,9 +2358,9 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
 
     # init variable
     dH = dG = 0
-    base = 4000000000
-    T_KELVIN = 273.15
-    DNA_nM = 50
+    # base = 4000000000
+    # T_KELVIN = 273.15
+    # DNA_nM = 50
 
     seq1, seq2 = duplex_str.split("\n")
     region_pos_li = loop_region_dict["region_pos"]
@@ -2381,10 +2405,48 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
         
     # calc Tm
     print(f"\ndG is {dG}")
-    print(f"dH is {dH}")
     dS = (dH - dG) / 310.15 * 1000
+    dH *= 1000
+    Tm = 0
+    print(f"dH is {dH}")
     print(f"dS is {dS}")
-    Tm = dH * 1000 / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
+    
+    # init values
+    T_KELVIN = 273.15
+    K_mM = 50
+    base = 4000000000
+    
+    # salt params  
+    DNA_nM = 50
+    dmso_conc = 0
+    dmso_fact = 0.6
+    formamide_conc = 0.8
+    divalent = 1.5
+    dntp = 0.6
+    
+     # symmetry correction if seq is symmetrical
+    sym = symmetry(seq1)
+    if sym:
+        dS += -1.4
+        base /= 4
+    
+    # Terminal AT penalty 
+    for i in [seq1[0],seq1[-1]]:
+        if i in ["A","T"]:
+            dS += 4.1
+            dH += 2300
+        else:
+            dS += -2.8
+            dH += 100
+    
+    
+    GC_count = 0 if formamide_conc == 0.0 else str.count(seq1,"C") + str.count(seq1,"G")
+    K_mM += divalent_to_monovalent(divalent,dntp)
+    dS += 0.368 * (len(seq1) - 1) * log(K_mM / 1000.0 )
+
+    Tm = dH / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
+    Tm -= dmso_conc * dmso_fact
+    Tm += (0.453 * GC_count / len(seq1) - 2.88) * formamide_conc
     print(f"Tm is {Tm}")
 
 
@@ -2396,6 +2458,7 @@ def main():
     duplex_str = "GAACAG\nCT---C"
     duplex_str = "TAAACTGCC-----GGCAGTACATC\nATTTGACGGGTGAACCGTCATGTAG"
     duplex_str = "CCCTATT---------------------------ATTGACGTCAATA\nGGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTAT"
+    duplex_str = "GGCCGGAGTAAGCTGACAT\nCCGGCCTCATTCGACTGTA"
     loop_region_dict = loop_detective(duplex_str)
     calc_Tm_by_NN(duplex_str, loop_region_dict)
     
