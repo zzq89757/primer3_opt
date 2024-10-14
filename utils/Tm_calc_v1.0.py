@@ -5,8 +5,31 @@ from math import sqrt,log
 # and oligonucleotide DNA nearest-neighbor thermodynamics", Proc Natl
 # Acad Sci 95:1460-65 http://dx.doi.org/10.1073/pnas.95.4.1460]
 
-delta_h = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
+delta_h = [79, 84, 78, 72, 85, 80, 106, 78, 82, 98, 80, 84, 72, 82, 85, 79]
 
+delta_s = [222, 224, 210, 204, 227, 199, 272, 210, 222, 244, 199, 224, 213, 222, 227, 222]
+
+def print_energy():
+    cycle = 0
+    for i in range(len(delta_h)):
+        print(f"{round(-.1 * delta_h[i],1)}, ",end="")
+        if i % 4 == 3:
+            cycle += 1
+            # if cycle != 4 :print()
+        # print(cycle)
+            if cycle == 1:
+                print("# AA AC AG AT")
+            if cycle == 2:
+                print("# CA CC CG CT")
+            if cycle == 3:
+                print("# GA GC GG GT")
+            if cycle == 4:
+                print("# TA TC TG TT")
+            
+print_energy()
+exit()
+
+delta_h = [79, 84, 78, 72, 72, 85, 80, 106, 78, 78, 82, 98, 80, 84, 80, 72, 82, 85, 79, 72, 72, 80, 78, 72, 72]
 delta_s = [222, 224, 210, 204, 224, 227, 199, 272, 210, 272, 222, 244, 199, 224, 244, 213, 222, 227, 222, 227, 168, 210, 220, 215, 220]
 
 # End of tables nearest-neighbor parameter ------------------------------
