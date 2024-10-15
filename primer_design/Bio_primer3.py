@@ -38,7 +38,7 @@ const_args = {
     "PRIMER_OPT_GC_PERCENT": 50.0,
     "PRIMER_MAX_GC": 70.0,
     # "PRIMER_PRODUCT_SIZE_RANGE": [[150,250],[100,300],[301,400],[401,500],[501,600],[601,700],[701,850],[851,1000]],
-    "PRIMER_NUM_RETURN": 5,
+    "PRIMER_NUM_RETURN": 10,
     "PRIMER_MAX_END_STABILITY": 9.0,
     "PRIMER_MAX_LIBRARY_MISPRIMING": 12.00,
     "PRIMER_PAIR_MAX_LIBRARY_MISPRIMING": 20.00,
@@ -238,16 +238,15 @@ if __name__ == "__main__":
         # 设计引物时需要排除的区域 格式为二维列表，可以留空 (第一个是位置 第二个是长度)
         # 'SEQUENCE_EXCLUDED_REGION': [[0,200]], # 引物不能落在0~200位置
         "SEQUENCE_EXCLUDED_REGION": [
-            [0, 120],
-            [430, 20],
+            # [0, 120],
+            # [430, 20],
         ],  # 引物不能落在0~200和400~600位置
         # 设计引物时 引物落在该区域内，留空则为用输入的整段序列设计引物 四个元素分别表示左引物所落区域起始、区域长度，右引物所落区域起始、区域长度
         "SEQUENCE_PRIMER_PAIR_OK_REGION_LIST": [
-            100,
-            50,
-            400,
-            50,
-        ],  # 左引物只能落在50~100，右引物只能落在1000~1400
+            (300, 50, 600,200),
+            [130, 50, 600, 200],
+                                                
+                                                ]  # 左引物只能落在50~100，右引物只能落在1000~1400
         # 'SEQUENCE_PRIMER_PAIR_OK_REGION_LIST': [[0,50,1000,430],[960,60,1000,430]], # 左引物可落在0~50和960~1020，右引物只能落在1000~1430
     }
     alternative_args = {
@@ -259,29 +258,39 @@ if __name__ == "__main__":
         # pick_pcr_primers:输出用于pcr的引物 不输出探针
         # pick_qpcr_primers:输出用于qpcr的引物 且输出探针 (自定，非p3现有！！)
         # pick_pcr_primers_and_hyb_probe:输出用于pcr的引物 且输出探针
-        "PRIMER_TASK": "generic",
+        # "PRIMER_TASK": "generic",
+        "PRIMER_TASK": "pick_primer_list",
         # 'PRIMER_TASK': 'pick_pcr_primers_and_hyb_probe',
         # 'PRIMER_TASK': 'pick_sequencing_primers',
+        
         # NUM return(输出的引物对数目 留空则为默认值 允许用户修改)
         "PRIMER_NUM_RETURN": 20,
+        
         # SIZE range(输出的引物长度范围 留空则为默认值 允许用户修改)
-        # 'PRIMER_OPT_SIZE': 20,
+        'PRIMER_OPT_SIZE': 20,
         "PRIMER_MIN_SIZE": 15,
         "PRIMER_MAX_SIZE": 30,
+        
         #  TM range(输出的引物Tm值范围 留空则为默认值 允许用户修改)
         "PRIMER_OPT_TM": 59.0,
         "PRIMER_MIN_TM": 40.0,
         "PRIMER_MAX_TM": 65.0,
+        
         #  GC range(输出的引物GC含量范围 留空则为默认值 允许用户修改)
         "PRIMER_MIN_GC": 30.0,
         "PRIMER_OPT_GC": 50.0,
         "PRIMER_MAX_GC": 70.0,
+        
         # PROD(产物长度 二维列表[起始,终止] 优先级从左往右)
         # 'PRIMER_PRODUCT_SIZE_RANGE': [[670,700],[400,600]], # 优先设计产物长度为670~700，若该范围无结果，则考虑长度为400~600
         # 'PRIMER_PRODUCT_SIZE_RANGE': [[670,670],[400,600]], # 最优产物长度为670，若无结果，则考虑长度为400~600
         # 'PRIMER_PRODUCT_SIZE_RANGE': [[670,770],[30,600]], # 最优产物长度为670，若无结果，则考虑长度为400~600
-        "PRIMER_PAIR_MAX_DIFF_TM": 0.5,
+        # "PRIMER_PAIR_MAX_DIFF_TM": 0.5,
     }
 
     myres = primer_design(seq_args, alternative_args)
-    print(myres)
+    
+    for i in range(len(myres)):
+        print(f"LEFT_{i} {myres[i][f"PRIMER_LEFT_{i}"]}",end=";")
+        print(f"RIGHT_{i} {myres[i][f"PRIMER_RIGHT_{i}"]}")
+    # print(myres)

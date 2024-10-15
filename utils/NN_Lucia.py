@@ -2464,7 +2464,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     DNA_nM = 50
     dmso_conc = 0
     dmso_fact = 0.6
-    formamide_conc = 0.8
+    formamide_conc = 0.0
     divalent = 1.5
     dntp = 0.6
     
@@ -2484,7 +2484,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
             dH += 100
     
     
-    GC_count = (str.count(seq1,"C") + str.count(seq1,"G") + str.count(seq2,"C") + str.count(seq2,"G")) / 2
+    GC_count = 0 if formamide_conc == 0.0 else (str.count(seq1,"C") + str.count(seq1,"G") + str.count(seq2,"C") + str.count(seq2,"G")) / 2
     K_mM += divalent_to_monovalent(divalent,dntp)
     dS += 0.368 * (len(seq1) - 1) * log(K_mM / 1000.0 )
 
@@ -2504,6 +2504,7 @@ def main():
     # duplex_str = "CCCTATT---------------------------ATTGACGTCAATA\nGGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTAT"
     # duplex_str = "GGCCGGAGTAAGCTGACAT\nCCGGCCTCATTCGACTGTA"
     # duplex_str = "AAAAAAAAAA\nTTTTTTTTTT"
+    duplex_str = "CCTGATTCTGTGGATAACC--ATTACCGCCTTTGAGTGAGCT\nGGACTAAGACACCTATTGGCATAATGGCGGAAACTCACTCGA"
     loop_region_dict = loop_detective(duplex_str)
     calc_Tm_by_NN(duplex_str, loop_region_dict)
     
