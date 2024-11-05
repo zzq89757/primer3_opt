@@ -31,7 +31,18 @@ def loop_detective(duplex_str: str) -> defaultdict:
             region_type_flag = 0
     # print(loop_region_dict)
     return loop_region_dict
-
+duplex_str = "CAGACG\nGTAGGC"
+duplex_str = "CA--G--CG\nGTGAAAGGC"
+duplex_str = "CA-GACG\nGTGAGGC"
+duplex_str = "GCCCG\nCGG-C"
+duplex_str = "GAACAG\nCT---C"
+duplex_str = "TAAACTGCC-----GGCAGTACATC\nATTTGACGGGTGAACCGTCATGTAG"
+# duplex_str = "CCCTATT---------------------------ATTGACGTCAATA\nGGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTAT"
+# duplex_str = "GGCCGGAGTAAGCTGACAT\nCCGGCCTCATTCGACTGTA"
+# duplex_str = "AAAAAAAAAA\nTTTTTTTTTT"
+region_dict = loop_detective(duplex_str)
+print(region_dict)
+exit()
 
 def base2int(base: str) -> int:
     """将base(without N)转化为索引号"""

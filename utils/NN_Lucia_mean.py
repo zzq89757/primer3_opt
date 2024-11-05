@@ -7,104 +7,50 @@ def complement_base(base: str) -> str:
     return base.upper().translate(trantab)
 
 
+base_li = ["A", "T", "C", "G"]
 
-def is_complement(base1: str, base2: str) -> bool:
-    return complement_base(base1) == base2.upper()
+# degenerate bases table
+degenerate_base_dict = defaultdict(deque)
+def fill_dict(i: str) -> None:
+    degenerate_base_dict[i] = deque([i])
+[fill_dict(i) for i in base_li]
 
 
-def modify_pair_base(primer_degenerate_base: str, template_degenerate_base: str) -> list:
-    base_li = ["A", "T", "C", "G"]
-    if (primer_degenerate_base in base_li or primer_degenerate_base == "N") and template_degenerate_base in base_li:
-        return [primer_degenerate_base, template_degenerate_base]
+degenerate_base_dict['R'] = deque(["A", "G"])
+degenerate_base_dict['Y'] = deque(["C", "T"])
+degenerate_base_dict['M'] = deque(["C", "A"])
+degenerate_base_dict['K'] = deque(["T", "G"])
+degenerate_base_dict['S'] = deque(["C", "G"])
+degenerate_base_dict['W'] = deque(["T", "A"])
     
+degenerate_base_dict['B'] = deque(["G", "T", "C"])
+degenerate_base_dict['V'] = deque(["G", "A", "C"])
+degenerate_base_dict['D'] = deque(["G", "A", "T"])
+degenerate_base_dict['H'] = deque(["C", "A", "T"])
+    
+degenerate_base_dict['N'] = deque(["C", "A", "T", "G"])
+    
+degenerate_base_dict['Z'] = deque([])
 
-    # degenerate bases table
-    degenerate_base_dict = defaultdict(deque)
-    def fill_dict(i: str) -> None:
-        degenerate_base_dict[i] = deque([i])
-    [fill_dict(i) for i in base_li]
-        
+def replace_base(base1: str, base2: str) -> list:
+    if base1 in base_li and base2 in base_li:
+        return [base1, base2]
+    # AY
+    if base1 in base_li:
+        return [base1, base2]
+    # YA
+    if base2 in base_li:
+        # base1 contain base2
+        if base2 in degenerate_base_dict[base1]:
+            return [complement_base(base2), base2]
+    # YW
     
-    degenerate_base_dict['R'] = deque(["A", "G"])
-    degenerate_base_dict['Y'] = deque(["C", "T"])
-    degenerate_base_dict['M'] = deque(["C", "A"])
-    degenerate_base_dict['K'] = deque(["T", "G"])
-    degenerate_base_dict['S'] = deque(["C", "G"])
-    degenerate_base_dict['W'] = deque(["T", "A"])
+    if set(degenerate_base_dict[base1]).issuperset(set(degenerate_base_dict[base2])):
+        ...
     
-    degenerate_base_dict['B'] = deque(["G", "T", "C"])
-    degenerate_base_dict['V'] = deque(["G", "A", "C"])
-    degenerate_base_dict['D'] = deque(["G", "A", "T"])
-    degenerate_base_dict['H'] = deque(["C", "A", "T"])
-    
-    degenerate_base_dict['N'] = deque(["C", "A", "T", "G"])
-    
-    degenerate_base_dict['Z'] = deque([])
-    # print(degenerate_base_dict)
-    
-    # is primer_degenerate_base contain complement to template_degenerate_base
-    primer_base_li = degenerate_base_dict[primer_degenerate_base]
-    template_base_li = degenerate_base_dict[template_degenerate_base]
-    
-    if len(primer_base_li) < len(template_base_li):
-        if len(primer_base_li) == 1:
-            return [primer_degenerate_base, "Z"]
-        else:
-            return ["Z", "Z"]
-    
-    primer_base_set = set(primer_base_li)
-    tmp_base_set = set([complement_base(x) for x in template_base_li])
-    if len(template_base_li) == 1:
-        if tmp_base_set.issubset(primer_base_set):
-            return ["N", template_degenerate_base]
-        else:
-            return ["Z", template_degenerate_base]
-    else:
-        if tmp_base_set.issubset(primer_base_set):
-            if tmp_base_set:
-                return ["N", "N"]
-            else:
-                if len(primer_degenerate_base) == 1:
-                    # return ['X']
-                    return [primer_degenerate_base, template_degenerate_base]
-                else:
-                    return ['X']
-        else:
-            return ["Z", "Z"]
-    
-    
-# for i in "ACGTNRYMKSWVBHD":
-#     for j in "ACGTNRYMKSWVBHD":
-#         print([i,j],end=" ===>> ")
-#         print(modify_pair_base(i, j))
+            
 
 
-
-def modified_duplex_str(duplex_str: str) -> str:
-    seq1, seq2 = duplex_str.split("\n")
-    modified_seq1 = modified_seq2 = ""
-    for primer_base, tmp_base in zip(seq1.upper(),seq2.upper()):
-        # primer seq,
-        modified_primer_base, modified_tmp_base = modify_pair_base(primer_base, tmp_base)
-        modified_seq1 += modified_primer_base
-        modified_seq2 += modified_tmp_base           
-        
-    return f"{modified_seq1}\n{modified_seq2}"
-
-ds = "AYNTCGATNBYGT\nTTNAGCYAYDCGT"
-print(modified_duplex_str(ds))
-
-
-
-def pair_type(ord_sum: int) -> int:
-    # gap for -1
-    if ord_sum % 45 == 0:
-        return -1
-    # match for 1
-    if ord_sum in [5460, 4757] or ord_sum % 73 == 0:
-        return 1
-    # 0 for mismatch
-    return 0
 
 
 def loop_detective(duplex_str: str) -> defaultdict:
@@ -114,7 +60,7 @@ def loop_detective(duplex_str: str) -> defaultdict:
     seq1, seq2 = duplex_str.split("\n")
     # ord sum is  AT: 65 + 84 = 149   CG: 67 + 71 = 138
     match_asc_li = [149, 138]
-    gap_asc_li = [90, 129, 116, 112, 110] # -- -T -G -C -A
+    gap_asc_li = [90, 129, 116, 112, 110]
     ord_sum_li = [ord(x) + ord(y) for x, y in zip(seq1, seq2)]
     # record mismatch and gaps,then recogonize bulge loop and internal loop
     loop_region_dict = defaultdict(
@@ -124,14 +70,11 @@ def loop_detective(duplex_str: str) -> defaultdict:
     flag = 0  # switch to record region start and end index
     # print(ord_sum_li)
     for i, v in enumerate(ord_sum_li):
-        # mismatch or gap,record region start
         if v not in match_asc_li and not flag:
             loop_region_dict["region_pos"].append(i)
             flag = 1
-        # mismatch found,record int loop
         if v not in gap_asc_li and v not in match_asc_li:
             region_type_flag = 1
-        # record region end
         if v in match_asc_li and flag:
             loop_region_dict["region_pos"].append(i - 1)
             loop_region_dict["region_type"].append(region_type_flag)
@@ -139,18 +82,7 @@ def loop_detective(duplex_str: str) -> defaultdict:
             region_type_flag = 0
     # print(loop_region_dict)
     return loop_region_dict
-duplex_str = "CAGACG\nGTAGGC"
-duplex_str = "CA--G--CG\nGTGAAAGGC"
-duplex_str = "CA-GACG\nGTGAGGC"
-duplex_str = "GCCCG\nCGG-C"
-duplex_str = "GAACAG\nCT---C"
-duplex_str = "TAAACTGCC-----GGCAGTACATC\nATTTGACGGGTGAACCGTCATGTAG"
-# duplex_str = "CCCTATT---------------------------ATTGACGTCAATA\nGGGATAACCGCAATGATACCCTTGTATGCAGTAATAACTGCAGTTAT"
-# duplex_str = "GGCCGGAGTAAGCTGACAT\nCCGGCCTCATTCGACTGTA"
-# duplex_str = "AAAAAAAAAA\nTTTTTTTTTT"
-region_dict = loop_detective(duplex_str)
-print(region_dict)
-exit()
+
 
 def base2int(base: str) -> int:
     """将base(without N)转化为索引号"""
@@ -161,10 +93,10 @@ def base2int(base: str) -> int:
 def stack_energy(segment: str) -> list:
     """近邻法计算stack的总能量值"""
     delta_h = [
-        -7.9, -8.4, -7.8,  -7.2, # AA AC AG AT
+        -7.9, -8.4, -7.8, -7.2, # AA AC AG AT
         -8.5, -8.0, -10.6, -7.8, # CA CC CG CT
-        -8.2, -9.8, -8.0,  -8.4, # GA GC GG GT
-        -7.2, -8.2, -8.5,  -7.9, # TA TC TG TT
+        -8.2, -9.8, -8.0, -8.4, # GA GC GG GT
+        -7.2, -8.2, -8.5, -7.9, # TA TC TG TT
     ]
     delta_s = [
         -22.2, -22.4, -21.0, -20.4, # AA AC AG AT
@@ -2587,7 +2519,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     divalent = 1.5
     dntp = 0.6
     
-    # symmetry correction if seq is symmetrical
+     # symmetry correction if seq is symmetrical
     sym = symmetry(seq1)
     if sym:
         dS += -1.4
