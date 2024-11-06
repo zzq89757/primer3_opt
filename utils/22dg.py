@@ -1,3 +1,8 @@
+from collections import defaultdict, deque
+
+
+int_loop_energy_dict = defaultdict(deque)
+
 int_loop_energy_dict["22dg"] = deque([
 		# A A
 		# T T
@@ -320,3 +325,6 @@ int_loop_energy_dict["22dg"] = deque([
 			1.8,2.0,1.9,2.5,2.0,2.2,2.3,2.1,1.9,2.1,1.9,2.5,2.5,2.1,2.5,1.9,
 		],
 ])
+
+
+
