@@ -1,130 +1,202 @@
-int_loop_energy_dict["11dg"] = deque([
-	# A A
-	# T T
-	[
-		12.9,1.5,10.7,1.5,
-		10.4,14.7,10.4,-1.6,
-		1.8,1.5,1.6,1.5,
-		10.4,3.5,10.4,-4.8,
-	],
-	# A C
-	# T G
-	[
-		10.0,10.9,8.9,10.9,
-		4.1,12.8,4.1,1.3,
-		4.5,10.9,-5.0,10.9,
-		4.1,11.6,4.1,0.5,
-	],
-	# A G
-	# T C
-	[
-		5.0,3.9,-6.3,3.9,
-		5.3,2.6,5.3,-4.9,
-		-2.2,3.9,-9.9,3.9,
-		5.3,-12.3,5.3,-7.5,
-	],
-	# A T
-	# T A
-	[
-		4.9,9.8,7.1,9.8,
-		9.8,7.5,9.8,4.3,
-		7.1,9.8,4.1,9.8,
-		9.8,4.3,9.8,5.7,
-	],
-	# C A
-	# G T
-	[
-		10.0,13.2,11.3,13.2,
-		9.6,5.9,9.6,0.1,
-		6.9,13.2,-1.1,13.2,
-		9.6,3.0,9.6,0.7,
-	],
-	# C C
-	# G G
-	[
-		-0.6,4.6,1.3,4.6,
-		9.3,7.5,9.3,1.9,
-		3.9,4.6,-0.9,4.6,
-		9.3,0.5,9.3,2.1,
-	],
-	# C G
-	# G C
-	[
-		4.0,5.1,6.1,5.1,
-		5.1,4.1,5.1,1.6,
-		6.1,5.1,0.1,5.1,
-		5.1,1.6,5.1,-2.7,
-	],
-	# C T
-	# G A
-	[
-		5.0,5.3,-2.2,5.3,
-		3.9,2.6,3.9,-12.3,
-		-6.3,5.3,-9.9,5.3,
-		3.9,-4.9,3.9,-7.5,
-	],
-	# G A
-	# C T
-	[
-		-1.4,13.2,11.3,13.2,
-		4.2,12.9,4.2,-0.4,
-		6.9,13.2,3.4,13.2,
-		4.2,3.7,4.2,-10.0,
-	],
-	# G C
-	# C G
-	[
-		2.6,3.9,2.4,3.9,
-		3.9,6.0,3.9,-0.6,
-		2.4,3.9,-2.8,3.9,
-		3.9,-0.6,3.9,0.3,
-	],
-	# G G
-	# C C
-	[
-		-0.6,9.3,3.9,9.3,
-		4.6,7.5,4.6,0.5,
-		1.3,9.3,-0.9,9.3,
-		4.6,1.9,4.6,2.1,
-	],
-	# G T
-	# C A
-	[
-		10.0,4.1,4.5,4.1,
-		10.9,12.8,10.9,11.6,
-		8.9,4.1,-5.0,4.1,
-		10.9,1.3,10.9,0.5,
-	],
-	# T A
-	# A T
-	[
-		12.1,14.3,11.9,14.3,
-		14.3,17.4,14.3,2.5,
-		11.9,14.3,8.4,14.3,
-		14.3,2.5,14.3,6.2,
-	],
-	# T C
-	# A G
-	[
-		-1.4,4.2,6.9,4.2,
-		13.2,12.9,13.2,3.7,
-		11.3,4.2,3.4,4.2,
-		13.2,-0.4,13.2,-10.0,
-	],
-	# T G
-	# A C
-	[
-		10.0,9.6,6.9,9.6,
-		13.2,5.9,13.2,3.0,
-		11.3,9.6,-1.1,9.6,
-		13.2,0.1,13.2,0.7,
-	],
-	# T T
-	# A A
-	[
-		12.9,10.4,1.8,10.4,
-		1.5,14.7,1.5,3.5,
-		10.7,10.4,1.6,10.4,
-		1.5,-1.6,1.5,-4.8,
-	],
-])
+from collections import defaultdict, deque
+
+
+int_loop_energy_dict = defaultdict(deque)
+
+
+int_loop_energy_dict["11dh"] = deque([
+        # A A
+        # T T
+        [
+            1.3, 2.2, 0.9, 1.0, # AA AC AG AT
+            1.7, 2.4, 1.0, 1.4, # CA CC CG CT
+            1.7, 2.4, 1.0, 1.4, # GA GC GG GT
+            1.7, 2.4, 1.0, 1.4, # TA TC TG TT           
+        ],
+        # A C
+        # T G
+        [
+            0.8,  1.4, -0.4, 1.0, # AA AC AG AT
+            1.6,  2.1,  1.0, 1.6, # CA CC CG CT
+            -0.2, 1.0, -1.2, 2.0, # GA GC GG GT
+            1.0,  1.4,  2.0, 1.1, # TA TC TG TT    
+        ],
+        # A G
+        # T C
+        [
+            1.0, 1.7,  0.3, 1.0, # AA AC AG AT
+            1.5, 2.0,  1.0, 1.0, # CA CC CG CT
+            0.1, 1.0, -0.3, 2.0, # GA GC GG GT
+            1.0, 1.4,  2.0, 0.6, # TA TC TG TT 
+        ],
+        # A T
+        # T A
+        [
+            1.2, 1.7,  0.2, 1.0, # AA AC AG AT
+            1.7, 2.7,  1.0, 1.4, # CA CC CG CT
+            0.2, 1.0, -0.3, 2.0, # GA GC GG GT
+            1.0, 1.4,  2.0, 1.4, # TA TC TG TT 
+        ],
+        # C A
+        # G T
+        [
+            1.1, 2.1, 0.8, 1.0, # AA AC AG AT
+            1.7, 1.8, 1.0, 1.4, # CA CC CG CT
+            0.5, 1.0, 0.3, 2.0, # GA GC GG GT
+            1.0, 1.4, 2.0, 0.6, # TA TC TG TT 
+        ],
+        # C C
+        # G G
+        [
+            0.6,  1.2, -0.5, 1.0, # AA AC AG AT
+            1.6,  1.5,  1.0, 1.6, # CA CC CG CT
+            -0.1, 1.0, -1.3, 2.0, # GA GC GG GT
+            1.0,  1.0,  2.0, 0.3, # TA TC TG TT 
+        ],
+        # C G
+        # G C
+        [
+            0.9, 1.5,  0.1,  1.0, # AA AC AG AT
+            1.5, 1.4,  1.0,  1.0, # CA CC CG CT
+            0.1, 1.0, -0.3,  2.0, # GA GC GG GT
+            1.0, 1.0,  2.0, -0.2, # TA TC TG TT 
+        ],
+        # C T
+        # G A
+        [
+            1.0, 1.5,  0.1, 1.0, # AA AC AG AT
+            1.7, 2.0,  1.0, 1.4, # CA CC CG CT
+            0.3, 1.0, -0.3, 2.0, # GA GC GG GT
+            1.0, 1.0,  2.0, 0.6, # TA TC TG TT 
+        ],
+        # G A
+        # C T
+        [
+            0.9,  2.1,  0.5, 1.0, # AA AC AG AT
+            1.4,  1.8,  1.0, 1.4, # CA CC CG CT
+            -0.1, 1.0, -0.7, 2.0, # GA GC GG GT
+            1.0,  2.0,  2.0, 1.1, # TA TC TG TT 
+        ],
+        # G C
+        # C G
+        [
+            0.3,  1.3, -0.8, 1.0, # AA AC AG AT
+            1.3,  1.6,  1.0, 1.6, # CA CC CG CT
+            -0.8, 1.0, -2.2, 2.0, # GA GC GG GT
+            1.0,  1.6,  2.0, 0.9, # TA TC TG TT 
+        ],
+        # G G
+        # C C
+        [
+            0.6,  1.6, -0.1, 1.0, # AA AC AG AT
+            1.2,  1.5,  1.0, 1.0, # CA CC CG CT
+            -0.5, 1.0, -1.3, 2.0, # GA GC GG GT
+            1.0,  1.6,  2.0, 0.3, # TA TC TG TT 
+        ],
+        # G T
+        # C A
+        [
+            0.8,  1.6, -0.2, 1.0, # AA AC AG AT
+            1.4,  2.1,  1.0, 1.4, # CA CC CG CT
+            -0.4, 1.0, -1.2, 2.0, # GA GC GG GT
+            1.0,  1.6,  2.0, 1.1, # TA TC TG TT 
+        ],
+        # T A
+        # A T
+        [
+            1.4, 2.3, 1.2, 1.0, # AA AC AG AT
+            2.3, 2.1, 1.0, 1.7, # CA CC CG CT
+            1.2, 1.0, 0.9, 2.0, # GA GC GG GT
+            1.0, 1.7, 2.0, 1.4, # TA TC TG TT 
+        ],
+        # T C
+        # A G
+        [
+            0.9, 1.4, -0.1, 1.0, # AA AC AG AT
+            2.1, 1.8,  1.0, 2.0, # CA CC CG CT
+            0.5, 1.0, -0.7, 2.0, # GA GC GG GT
+            1.0, 1.4,  2.0, 1.1, # TA TC TG TT 
+        ],
+        # T G
+        # A C
+        [
+            1.1, 1.7, 0.5, 1.0, # AA AC AG AT
+            2.1, 1.8, 1.0, 1.4, # CA CC CG CT
+            0.8, 1.0, 0.3, 2.0, # GA GC GG GT
+            1.0, 1.4, 2.0, 0.6, # TA TC TG TT 
+        ],
+        # T T
+        # A A
+        [
+            1.3, 1.7, 0.4, 1.0, # AA AC AG AT
+            2.2, 2.4, 1.0, 1.7, # CA CC CG CT
+            0.9, 1.0, 0.3, 2.0, # GA GC GG GT
+            1.0, 1.4, 2.0, 1.4, # TA TC TG TT 
+        ]      
+    ])
+    
+matrix = int_loop_energy_dict["11dh"]
+
+
+def base2int(base: str) -> int:
+    """将base(without N)转化为索引号"""
+    trantab = str.maketrans("ACGTN", "01234")
+    return int(base.upper().translate(trantab), base=5)
+def index_intl11(bases: str) -> int:
+    """            
+            X
+           A  A  ---- AAA
+           T  T
+            YA
+    """
+    upstream_base, downstream_base = bases[:]
+    external_index = base2int(upstream_base + downstream_base)
+    return external_index
+
+def obtain_N_sub_idx(bases: str) -> list:
+    if index_intl11(bases) < 20 :
+        sub_li = [bases[0] + x  for x in ["A", "C", "G", "T"]]
+        # print([index_intl21(x) for x in sub_li])  
+        return  [index_intl11(x) for x in sub_li]
+    else:
+        sub_li = [ x + bases[1]  for x in ["A", "C", "G", "T"]]
+        return  [index_intl11(x) for x in sub_li]
+    
+def obtain_mean(bases: str) -> list:
+    list2append = []
+    idx_li = obtain_N_sub_idx(bases)
+    
+    for i in range(16):
+        ele = round(sum([matrix[x][i] for x in idx_li]) / 4 , 1)
+        list2append.append(ele)
+    return list2append
+
+# insert matrix
+insert_idx = 4
+# AN
+int_loop_energy_dict["11dh"].insert(insert_idx, obtain_mean("AN"))
+insert_idx += 5
+int_loop_energy_dict["11dh"].insert(insert_idx, obtain_mean("CN"))
+insert_idx += 5
+int_loop_energy_dict["11dh"].insert(insert_idx, obtain_mean("GN"))
+insert_idx += 5
+int_loop_energy_dict["11dh"].insert(insert_idx, obtain_mean("TN"))
+insert_idx += 1
+# NA
+int_loop_energy_dict["11dh"].append(obtain_mean("NA"))
+int_loop_energy_dict["11dh"].append(obtain_mean("NC"))
+int_loop_energy_dict["11dh"].append(obtain_mean("NG"))
+int_loop_energy_dict["11dh"].append(obtain_mean("NT"))
+int_loop_energy_dict["11dh"].append(obtain_mean("NN"))
+
+# format print
+basen_li = ["A", "C", "G", "T", "N"]
+for i, x in enumerate(int_loop_energy_dict["11dh"]):
+    first_base = basen_li[i // 5]
+    second_base = basen_li[i % 5]
+    print(f"\t\t# {first_base} {second_base}")
+    
+    print("\t\t[")
+    print("\t\t\t",end="")
+    print(", ".join([str(y) for y in x]))
+    print("\t\t],")
