@@ -2192,7 +2192,7 @@ stack_ds = [-22.2, -22.4, -21.0, -20.4, -21.5, -22.7, -19.9, -27.2, -21.0, -22.7
 
 
 
-######## actual cmopute start ########
+######## actual compute start ########
 ######################################
 
 # mismatch detective and replace bases
