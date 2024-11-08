@@ -2931,7 +2931,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     
 
 def main() -> None:
-    duplex_str = "CCTGATTCTGTGGATAACC--ATTACCGCCTTTGAGTGAGCT\nGGACTAAGACACCTATTGGCATAATGGCGGAAACTCACTCGA"
+    duplex_str = "CCTGATTCTGTGGATAACC--ATTACCGCCTTTYAGTGAGCT\nGGACTAAGACACCTATTGGCATAATGGCGGAAACTCACTCGA"
     modified_str = modify_bases(duplex_str)
     loop_dict = loop_detective(modified_str)
     calc_Tm_by_NN(modified_str, loop_dict)
