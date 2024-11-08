@@ -2653,7 +2653,7 @@ def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int) -> li
                 symmetric_int_loop_dh /= (len(degenerate_base_dict[x_base2]) * len(degenerate_base_dict[y_base2]))
                 symmetric_int_loop_dg /= (len(degenerate_base_dict[x_base2]) * len(degenerate_base_dict[y_base2]))
                 
-    print(f"symmetric_int_loop_dg is {symmetric_int_loop_dg}")
+    # print(f"symmetric_int_loop_dg is {symmetric_int_loop_dg}")
     
     return [symmetric_int_loop_dh, symmetric_int_loop_dg]
 
@@ -2884,10 +2884,10 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
         region_idx += 1       
         
     # calc Tm
-    print(f"\ndG is {dG}")
     dS = (dH - dG) / 310.15 * 1000
     dH *= 1000
     Tm = 0
+    print(f"\ndG is {dG}")
     print(f"dH is {dH}")
     print(f"dS is {dS}")
     
@@ -2928,6 +2928,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     Tm -= dmso_conc * dmso_fact
     Tm += (0.453 * GC_count / len(seq1) - 2.88) * formamide_conc
     print(f"Tm is {Tm}")
+    return Tm
     
 
 def main() -> None:
