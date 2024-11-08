@@ -2332,11 +2332,10 @@ def is_complement(base1: str, base2: str) -> bool:
 
 
 # mismatch detective and replace bases
-def modify_bases(duplex_str: str) -> list:
+def modify_bases(duplex_str: str) -> str:
     seq1, seq2 = duplex_str.split("\n")
     modified_seq_li1 = []
     modified_seq_li2 = []
-    multi_pos_dict = defaultdict(deque) # pos->bases
     for idx, (x, y) in enumerate(zip(seq1, seq2)):
         if y in base_li and x in base_li:
             modified_seq_li1.append(x)
@@ -2362,7 +2361,6 @@ def modify_bases(duplex_str: str) -> list:
                 else:
                     modified_seq_li1.append(x)
                     modified_seq_li2.append(y)
-                    multi_pos_dict[idx] = degenerate_base_dict[y]
             continue
                 
         if y in degenerate_bases_li:
@@ -2379,9 +2377,8 @@ def modify_bases(duplex_str: str) -> list:
                 else:
                     modified_seq_li1.append(x)
                     modified_seq_li2.append(y)
-                    multi_pos_dict[idx] = degenerate_base_dict[y]
     modified_duplex_str = "".join(modified_seq_li1) + "\n" + "".join(modified_seq_li2)
-    return modified_duplex_str, multi_pos_dict
+    return modified_duplex_str
 
 
 def loop_detective(duplex_str: str) -> defaultdict:
@@ -2410,9 +2407,14 @@ def loop_detective(duplex_str: str) -> defaultdict:
 
 
 def base2int(base: str) -> int:
-    """将base(without N)转化为索引号"""
+    """将base(with N)转化为索引号"""
     trantab = str.maketrans("ACGTN", "01234")
     return int(base.upper().translate(trantab), base=5)
+
+def base4int(base: str) -> int:
+    """将base(without N)转化为索引号"""
+    trantab = str.maketrans("ACGT", "0123")
+    return int(base.upper().translate(trantab), base=4)
 
 
 
@@ -2424,7 +2426,7 @@ def index_intl11(upstream_base: str, downstream_base: str, x_base: str, y_base: 
             Y
     """ 
     external_index = base2int(upstream_base + downstream_base)
-    internal_index = base2int(x_base + y_base)
+    internal_index = base4int(x_base + y_base)
     return [external_index, internal_index]
 
 
@@ -2436,7 +2438,7 @@ def index_intl21(upstream_base: str, downstream_base: str, x_base: str, y_base: 
             YA
     """
     external_index = base2int(y_neibor_base + upstream_base + downstream_base)
-    internal_index = base2int(x_base + y_base)
+    internal_index = base4int(x_base + y_base)
     return [external_index, internal_index]
 
 
@@ -2446,7 +2448,7 @@ def index_intl22(upstream_base: str, downstream_base: str, x_base1: str, y_base1
 	    T X2 Y2 T
     """
     external_index = base2int(upstream_base + downstream_base)
-    internal_index = base2int(x_base1 + x_base2 + y_base1 + y_base2)
+    internal_index = base4int(x_base1 + x_base2 + y_base1 + y_base2)
     return [external_index, internal_index]
 
 
@@ -2545,7 +2547,6 @@ def bulge_energy(segment: str, bulge_length: int, seq: str, bulge_pos: int) -> l
         ex_stack_dh, ex_stack_dg = stack_energy(segment[0] + segment[-1])
         # states correction
         states_dg = states_correction_dg(seq, bulge_pos)
-        # print(f"{ex_stack_dg} is ex_stack_dg")
         bulge_loop_dh += ex_stack_dh
         bulge_loop_dg += ex_stack_dg + states_dg
     else:
@@ -2771,9 +2772,6 @@ def asymmetric_int_loop_energy(
     return [asymmetric_int_loop_dh, asymmetric_int_loop_dg]
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
-    # print(segment1)
-    # print(segment2)
-    # exit()
     """对intloop进行分型并计算能量"""
     int_loop_dh = 0
     int_loop_dg = 0
@@ -2933,10 +2931,10 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     
 
 def main() -> None:
-    duplex_str = "CCTNYKG\nGAAYCMC"
-    m_str, m_dict = modify_bases(duplex_str)
-    loop_dict = loop_detective(m_str)
-    calc_Tm_by_NN(m_str, loop_dict)
+    duplex_str = "CCTGATTCTGTGGATAACC--ATTACCGCCTTTGAGTGAGCT\nGGACTAAGACACCTATTGGCATAATGGCGGAAACTCACTCGA"
+    modified_str = modify_bases(duplex_str)
+    loop_dict = loop_detective(modified_str)
+    calc_Tm_by_NN(modified_str, loop_dict)
     
 
 if __name__ == "__main__":
