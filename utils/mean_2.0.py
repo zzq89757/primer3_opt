@@ -1,5 +1,5 @@
 from collections import defaultdict,deque
-
+from math import log, sqrt
 
 
 ################ matrix start ###############
@@ -2186,8 +2186,105 @@ int_loop_energy_dict["22dh"] = deque([
 ])
 
 # stack energy matrix
-stack_dh = [-7.9, -8.4, -7.8, -7.2, -7.8, -8.5, -8.0, -10.6, -7.8, -8.7, -8.2, -9.8, -8.0, -8.4, -8.6, -7.2, -8.2, -8.5, -7.9, -8.0, -8.0, -8.6, -8.7, -7.8, -8.3]
-stack_ds = [-22.2, -22.4, -21.0, -20.4, -21.5, -22.7, -19.9, -27.2, -21.0, -22.7, -22.2, -24.4, -19.9, -22.4, -22.2, -21.3, -22.2, -22.7, -22.2, -22.1, -22.1, -22.2, -22.7, -21.5, -22.1]
+stack_dh_table = [-7.9, -8.4, -7.8, -7.2, -7.8, -8.5, -8.0, -10.6, -7.8, -8.7, -8.2, -9.8, -8.0, -8.4, -8.6, -7.2, -8.2, -8.5, -7.9, -8.0, -8.0, -8.6, -8.7, -7.8, -8.3]
+stack_ds_table = [-22.2, -22.4, -21.0, -20.4, -21.5, -22.7, -19.9, -27.2, -21.0, -22.7, -22.2, -24.4, -19.9, -22.4, -22.2, -21.3, -22.2, -22.7, -22.2, -22.1, -22.1, -22.2, -22.7, -21.5, -22.1]
+
+
+# mm energy matrix
+mm_dg = deque([
+        # A X
+        # T Y
+        [
+            -0.7,-0.3,-0.5,-0.0,0,
+            -0.6,-0.2,0.0, -0.3,0,
+            -0.6,0.0,-0.4, -0.5,0,
+            0.0,-0.3,-0.5, -0.4,0,
+            0,0,0,0,0
+        ],
+        # C X
+        # G Y
+        [
+            -1.0,-0.8,-0.9,0.0,0,
+            -0.8,-0.5,0.0,-0.7,0,
+            -1.0,0.0,-0.9,-1.0,0,
+            0.0,-0.6,-0.9,-0.9,0,
+            0,0,0,0,0
+        ],
+        # G X
+        # C Y
+        [
+            -1.0,-0.7,-0.8,0.0,0,
+            -1.0,-0.6,0.0,-0.7,0,
+            -1.0,0.0,-1.0,-0.8,0,
+            0.0,-0.6,-0.9,-0.9,0,
+            0,0,0,0,0
+        ],
+        # T X
+        # A Y
+        [
+            -0.6,-0.4,-0.5,0.0,0,
+            -0.5,-0.2,0.0,-0.5,0,
+            -0.6,-0.0,-0.4,-0.5,0,
+            0.0,-0.3,-0.6,-0.3,0,
+            0,0,0,0,0
+        ],
+        # N X
+        # N Y
+        [
+            -0.8, -0.6, -0.7, 0.0,0,
+            -0.7, -0.4, 0.0, -0.6,0,
+            -0.8, 0.0, -0.7, -0.7,0,
+            0.0, -0.5, -0.7, -0.6,0,
+            0,0,0,0,0
+        ]
+])
+mm_dh = deque([
+        # A X
+        # T Y
+        [
+            4.0,5.2,4.7,4.3,0,
+            4.0,5.2,4.7,4.3,0,
+            4.0,5.2,4.7,4.3,0,
+            4.0,5.2,4.7,4.3,0,
+            0,0,0,0,0
+        ],
+        # C X
+        # G Y
+        [
+            -4.6,-4.2,-4.7,-5.0,
+            -4.6,-4.2,-4.7,-5.0,
+            -4.6,-4.2,-4.7,-5.0,
+            -4.6,-4.2,-4.7,-5.0,
+            0,0,0,0,0
+        ],
+        # G X
+        # C Y
+        [
+            -6.2,-3.3,-5.1,-0.9,0,
+            -6.2,-3.3,-5.1,-0.9,0,
+            -6.2,-3.3,-5.1,-0.9,0,
+            -6.2,-3.3,-5.1,-0.9,0,
+            0,0,0,0,0
+        ],
+        # T X
+        # A Y
+        [
+            2.3,1.7,0.7,-5.8,0,
+            2.3,1.7,0.7,-5.8,0,
+            2.3,1.7,0.7,-5.8,0,
+            2.3,1.7,0.7,-5.8,0,
+            0,0,0,0,0
+        ],
+        # N X
+        # N Y
+        [
+            -1.1, -0.1, -1.1, -1.9,0,
+            -1.1, -0.1, -1.1, -1.9,0,
+            -1.1, -0.1, -1.1, -1.9,0,
+            -1.1, -0.1, -1.1, -1.9,0,
+            0,0,0,0,0
+        ]
+])
 
 
 ############# degenerate dict start ###########
@@ -2233,7 +2330,6 @@ def is_complement(base1: str, base2: str) -> bool:
 # mismatch detective and replace bases
 def modify_bases(duplex_str: str) -> list:
     degenerate_bases_li = ["N", "Y", "R", "K", "M", "S", "W", "B", "V", "D", "H", "Z"]
-    base_gap_li = ["A", "C", "G", "T", "-"]
     seq1, seq2 = duplex_str.split("\n")
     n_trantab = str.maketrans("ACGT", "CATG")
     modified_seq_li1 = []
@@ -2311,6 +2407,445 @@ def loop_detective(duplex_str: str) -> defaultdict:
     return loop_region_dict
 
 
+def base2int(base: str) -> int:
+    """将base(without N)转化为索引号"""
+    trantab = str.maketrans("ACGTN", "01234")
+    return int(base.upper().translate(trantab), base=5)
 
 
 
+def index_intl11(upstream_base: str, downstream_base: str, x_base: str, y_base: str) -> list:
+    """
+            X
+           A T
+           T A
+            Y
+    """ 
+    external_index = base2int(upstream_base + downstream_base)
+    internal_index = base2int(x_base + y_base)
+    return [external_index, internal_index]
+
+
+def index_intl21(upstream_base: str, downstream_base: str, x_base: str, y_base: str, y_neibor_base: str) -> list:
+    """            
+            X
+           A  A
+           T  T
+            YA
+    """
+    external_index = base2int(y_neibor_base + upstream_base + downstream_base)
+    internal_index = base2int(x_base + y_base)
+    return [external_index, internal_index]
+
+
+def index_intl22(upstream_base: str, downstream_base: str, x_base1: str, y_base1: str, x_base2: str, y_base2: str) -> list:
+    """
+    	A X1 Y1 A
+	    T X2 Y2 T
+    """
+    external_index = base2int(upstream_base + downstream_base)
+    internal_index = base2int(x_base1 + x_base2 + y_base1 + y_base2)
+    return [external_index, internal_index]
+
+
+############## energy compute start ##############
+##################################################
+
+def stack_energy(segment: str) -> list:
+    """近邻法计算stack的总能量值"""
+    stack_dh = 0
+    stack_ds = 0
+    stack_dg = 0
+    # print(delta_g)
+    for i in range(len(segment) - 1):
+        two_mer = segment[i] + segment[i + 1]
+        d_index = base2int(two_mer)
+        stack_dh += stack_dh_table[d_index]
+        stack_ds += stack_ds_table[d_index]
+    stack_dg = stack_dh - 310.15 * stack_ds / 1000
+    return [stack_dh, stack_dg]
+
+
+def intermolecular_initiation_energy() -> list:
+    ii_dh = -7.2  # intermolecular initiation dh
+    ii_dg = 1.0  # intermolecular initiation dg
+    return [ii_dh, ii_dg]
+
+
+def states_correction_dg(seq: str, bulge_pos: int) -> float:
+    state_num = 1
+    # get number of states
+    bulge_base = seq[bulge_pos]
+    forward_idx = bulge_pos
+    afterward_idx = bulge_pos
+    while forward_idx != 0 and afterward_idx != len(seq) - 1:
+        if forward_idx != 0 and seq[forward_idx] == bulge_base:
+            state_num += 1
+            forward_idx += 1
+        else:
+            forward_idx = 0
+        
+        if afterward_idx != len(seq) - 1 and seq[afterward_idx] == bulge_base :
+            state_num += 1
+            afterward_idx += 1
+        else:
+            afterward_idx = len(seq) - 1  
+    return -0.616 * log(state_num)
+
+
+
+def bulge_energy(segment: str, bulge_length: int, seq: str, bulge_pos: int) -> list:
+    """计算不同长度bulge的总能量值"""
+    
+    # bulge loop inition
+    bulge_loop_dict = defaultdict(deque)
+    bulge_loop_dict["dh"] = deque([18.9, -0.6, -2.3] + [-14.1] * 27)
+    bulge_loop_dict["dg"] = deque(
+        [
+            2.9,
+            2.3,
+            2.5,
+            2.7,
+            3.0,
+            3.2,
+            3.4,
+            3.5,
+            3.6,
+            3.7,
+            3.9,
+            3.9,
+            4.0,
+            4.1,
+            4.2,
+            4.3,
+            4.3,
+            4.4,
+            4.4,
+            4.5,
+            4.5,
+            4.6,
+            4.6,
+            4.7,
+            4.7,
+            4.7,
+            4.8,
+            4.9,
+            4.9,
+            4.9,
+        ]
+    )
+    
+    bulge_loop_dh = bulge_loop_dict["dh"][bulge_length - 1] if bulge_length <= 30 else bulge_loop_dict["dh"][-1]
+    bulge_loop_dg = bulge_loop_dict["dg"][bulge_length - 1] if bulge_length <= 30 else bulge_loop_dict["dg"][-1]
+    
+    # bulge length == 1,extra stack energy(bulge in 2 or -2) and - RT ln(number of states) and no AT panalty
+    if bulge_length == 1:
+        # extra stack energy 
+        ex_stack_dh, ex_stack_dg = stack_energy(segment[0] + segment[-1])
+        # states correction
+        states_dg = states_correction_dg(seq, bulge_pos)
+        # print(f"{ex_stack_dg} is ex_stack_dg")
+        bulge_loop_dh += ex_stack_dh
+        bulge_loop_dg += ex_stack_dg + states_dg
+    else:
+        # AT closure
+        at_dh, at_dg = ATclosure_energy(segment)
+        bulge_loop_dh += at_dh
+        bulge_loop_dg += at_dg
+        
+        # n > 6,bulge_loop_dg += 1.75 RT ln(n/6)
+        if bulge_length > 6:
+            bulge_loop_dg += 1.75 * 0.616 * log(bulge_length / 6)
+    
+    return [bulge_loop_dh, bulge_loop_dg]
+
+    
+def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int, int_loop_energy_dict: defaultdict) -> list:
+    """对称的int loop结构直接读取矩阵数据累加"""
+    symmetric_int_loop_dh = symmetric_int_loop_dg = 0
+    # base init
+    upstream_base = segment1[0] 
+    downstream_base = segment1[-1]
+    x_base = segment1[1]
+    y_base = segment2[1]
+    
+    # 1 * 1
+    if loop_sum == 2:
+       external_index, internal_index = index_intl11(upstream_base, downstream_base, x_base, y_base)
+       symmetric_int_loop_dh += int_loop_energy_dict["11dh"][external_index][internal_index]
+       symmetric_int_loop_dg += int_loop_energy_dict["11dg"][external_index][internal_index]
+    # 1 * 2
+    elif loop_sum == 3:
+        y_neibor_base = segment2[2]
+        external_index, internal_index = index_intl21(upstream_base, downstream_base, x_base, y_base, y_neibor_base)
+        symmetric_int_loop_dh += int_loop_energy_dict["21dh"][external_index][internal_index]
+        symmetric_int_loop_dg += int_loop_energy_dict["21dg"][external_index][internal_index]
+    # 2 * 2
+    else:
+        x_base1 = x_base
+        x_base2 = y_base
+        y_base1 = segment1[2]
+        y_base2 = segment2[2]
+        external_index, internal_index = index_intl22(upstream_base, downstream_base, x_base1, y_base1, x_base2, y_base2)
+        symmetric_int_loop_dh += int_loop_energy_dict["22dh"][external_index][internal_index]
+        symmetric_int_loop_dg += int_loop_energy_dict["22dg"][external_index][internal_index]
+    print(f"symmetric_int_loop_dg is {symmetric_int_loop_dg}")
+    
+    return [symmetric_int_loop_dh, symmetric_int_loop_dg]
+
+
+def asymmetry_correct_energy(loop_diff_abs: int) -> list:
+    asymmetry_dg = 0.4
+    asymmetry_dh = 0
+    asymmetry_correct_dh = asymmetry_dh * loop_diff_abs
+    asymmetry_correct_dg = asymmetry_dg * loop_diff_abs
+    return [asymmetry_correct_dh, asymmetry_correct_dg]
+
+
+def asymmetric_int_loop_initiation_energy(loop_sum: int) -> list:
+    initiation_dg = [
+        3.1,
+        3.5,
+        3.9,
+        4.1,
+        4.2,
+        4.3,
+        4.5,
+        4.6,
+        4.6,
+        4.7,
+        4.8,
+        4.9,
+        5.0,
+        5.0,
+        5.1,
+        5.1,
+        5.2,
+        5.3,
+        5.3,
+        5.3,
+        5.4,
+        5.4,
+        5.5,
+        5.5,
+        5.6,
+        5.6,
+        5.6,
+    ]
+    initiation_dh = [0.0] * 27
+
+    return [initiation_dh[loop_sum - 4], initiation_dg[loop_sum - 4]]
+
+
+def asymmetric_int_loop_mismatch_energy(
+    segment1: str, segment2: str, int_loop_type: list
+) -> list:
+    """只有非对称且min loop > 1 才考虑mismatch"""
+    mismatch_dh = mismatch_dg = 0
+    mismatch1_dh = mismatch1_dg = 0
+    mismatch2_dh = mismatch2_dg = 0
+    # min loop length == 1,do NOT consider mismatch energy
+    if int_loop_type[0] == 1:return [0.0, 0.0]
+    # mismatch energy calc by segment
+    external_index = base2int(segment1[0])
+    internal_index = base2int(segment1[1] + segment2[1])
+    mismatch1_dh = mm_dh[external_index][internal_index]
+    mismatch1_dg = mm_dg[external_index][internal_index]
+    
+    external_index = base2int(segment2[-1])
+    internal_index = base2int(segment2[-2] + segment1[-2])
+    mismatch2_dh = mm_dh[external_index][internal_index]
+    mismatch2_dg = mm_dg[external_index][internal_index]
+    
+    mismatch_dh = mismatch1_dh + mismatch2_dh
+    mismatch_dg = mismatch1_dg + mismatch2_dg
+    
+    return [mismatch_dh, mismatch_dg]
+
+
+def ATclosure_energy(segment1: str) -> list:
+    closure_AT_dh = closure_AT_dg = 0
+    if segment1[0] == "A" or segment1[0] == "T":
+        closure_AT_dh += 3.2
+    if segment1[-1] == "A" or segment1[-1] == "T":
+        closure_AT_dh += 3.2
+    return [closure_AT_dh, closure_AT_dg]
+        
+        
+
+def asymmetric_int_loop_energy(
+    segment1: str, segment2: str, loop_sum: int, loop_diff_abs: int, loop_type: list
+) -> list:
+    asymmetric_int_loop_dh = asymmetric_int_loop_dg = 0
+    # loop sum initiation energy
+    li_dh, li_dg = asymmetric_int_loop_initiation_energy(loop_sum)
+    # asymmetry correct energy
+    asymmetry_correct_dh, asymmetry_correct_dg = asymmetry_correct_energy(loop_diff_abs)
+    # mismatch energy
+    mm_dh, mm_dg = asymmetric_int_loop_mismatch_energy(segment1, segment2, loop_type)
+    # AT closure 
+    at_dh, at_dg = ATclosure_energy(segment1)
+    asymmetric_int_loop_dh = li_dh + asymmetry_correct_dh + mm_dh + at_dh
+    asymmetric_int_loop_dg = li_dg + asymmetry_correct_dg + mm_dg + at_dg
+    return [asymmetric_int_loop_dh, asymmetric_int_loop_dg]
+
+def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultdict) -> list:
+    """对intloop进行分型并计算能量"""
+    int_loop_dh = 0
+    int_loop_dg = 0
+
+
+    
+    first_loop_length = len(segment1) - segment1.count("-") - 2
+    second_loop_length = len(segment2) - segment2.count("-") - 2 
+    loop_sum = first_loop_length + second_loop_length
+    max_loop_length = max(first_loop_length, second_loop_length)
+    min_loop_length = loop_sum - max_loop_length
+    loop_type = [min_loop_length, max_loop_length]
+    is_symmetric = loop_sum <= 4 and max_loop_length < 3
+
+    # 2 x 1, reverse
+    if loop_sum == 3:
+        if first_loop_length == 2:
+            tmp = segment1[::-1]
+            segment1 = segment2[::-1]
+            segment2 = tmp
+        # ensure - in -2
+        if segment1[-2] != "-":
+            segment1 = segment1[0] + segment1[-2] + "-" + segment1[-1]
+    
+    # 1×1, 1×2, 2×2 Internal Loops
+    if is_symmetric:
+        symmetric_int_loop_dh, symmetric_int_loop_dg = symmetric_int_loop_energy(segment1, segment2, loop_sum, int_loop_energy_dict)
+        int_loop_dh += symmetric_int_loop_dh
+        int_loop_dg += symmetric_int_loop_dg
+    # Other Internal Loops
+    else:
+        loop_diff_abs = abs(first_loop_length - second_loop_length)
+        asymmetric_int_loop_dh, asymmetric_int_loop_dg = asymmetric_int_loop_energy(
+            segment1, segment2, loop_sum, loop_diff_abs, loop_type
+        )
+        int_loop_dh += asymmetric_int_loop_dh
+        int_loop_dg += asymmetric_int_loop_dg
+
+    return [int_loop_dh, int_loop_dg]
+
+
+def symmetry(seq):
+    '''
+    Return 1 if string is symmetrical, 0 otherwise.
+    '''
+    seq_len = len(seq)
+    mp = seq_len // 2
+    if seq_len % 2 == 1:return 0
+    for i in range(mp):
+        s = seq[i]
+        e = seq[seq_len - i - 1]
+        terminal_base_set={s,e}
+        if terminal_base_set != {"A","T"} and terminal_base_set != {"C","G"}:return 0
+    return 1
+
+
+def divalent_to_monovalent(divalent,dntp):
+    '''
+    Convert divalent salt concentration to monovalent
+    '''
+    if divalent == 0:dntp = 0
+    if divalent < dntp:divalent = dntp
+    return 120 * sqrt((divalent - dntp))
+
+def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
+        # init variable
+    dH = dG = 0
+    # base = 4000000000
+    # T_KELVIN = 273.15
+    # DNA_nM = 50
+
+    seq1, seq2 = duplex_str.split("\n")
+    region_pos_li = loop_region_dict["region_pos"]
+    region_type_li = loop_region_dict["region_type"]
+    region_idx = 0
+    while region_idx <= len(region_pos_li):
+        start = region_pos_li[region_idx - 1] if region_idx != 0 else -1
+        end = (
+            region_pos_li[region_idx] if region_idx != len(region_pos_li) else len(seq1)
+        )
+        # stack
+        if region_idx % 2 == 0 or region_idx == len(region_pos_li):
+            start += 1
+            end -= 1
+            stack_length = end - start + 1
+            # if stack length > 1, participate energy calc
+            if stack_length > 1:
+                segment = seq1[start : end + 1]
+                stack_dh, stack_dg = stack_energy(segment)
+                dH += stack_dh
+                dG += stack_dg
+        # loop
+        else:
+            # intermolecular initiation energy
+            ii_dh, ii_dg = intermolecular_initiation_energy()
+            dH += ii_dh
+            dG += ii_dg
+            loop_idx = region_idx // 2
+            loop_type = region_type_li[loop_idx]
+            loop_length = end - start + 1
+            segment1 = seq1[start - 1:end + 2]
+            segment2 = seq2[start - 1:end + 2]
+            segment = segment2 if segment1.count("-") else segment1
+            seq = seq2[::-1] if segment1.count("-") else seq1
+            if not loop_type:  # bulge
+                bulge_dh, bulge_dg = bulge_energy(segment, loop_length, seq, start)
+                dH += bulge_dh
+                dG += bulge_dg
+            else:  # int loop
+                int_loop_dh, int_loop_dg = int_loop_energy(segment1, segment2, int_loop_energy_dict)
+                dH += int_loop_dh
+                dG += int_loop_dg 
+        region_idx += 1       
+        
+    # calc Tm
+    print(f"\ndG is {dG}")
+    dS = (dH - dG) / 310.15 * 1000
+    dH *= 1000
+    Tm = 0
+    print(f"dH is {dH}")
+    print(f"dS is {dS}")
+    
+    # init values
+    T_KELVIN = 273.15
+    K_mM = 50
+    base = 4000000000
+    
+    # salt params  
+    DNA_nM = 50
+    dmso_conc = 0
+    dmso_fact = 0.6
+    formamide_conc = 0.0
+    divalent = 1.5
+    dntp = 0.6
+    
+     # symmetry correction if seq is symmetrical
+    sym = symmetry(seq1)
+    if sym:
+        dS += -1.4
+        base /= 4
+    
+    # Terminal AT penalty 
+    for i in [seq1[0],seq1[-1]]:
+        if i in ["A","T"]:
+            dS += 4.1
+            dH += 2300
+        else:
+            dS += -2.8
+            dH += 100
+    
+    
+    GC_count = 0 if formamide_conc == 0.0 else (str.count(seq1,"C") + str.count(seq1,"G") + str.count(seq2,"C") + str.count(seq2,"G")) / 2
+    K_mM += divalent_to_monovalent(divalent,dntp)
+    dS += 0.368 * (len(seq1) - 1) * log(K_mM / 1000.0 )
+
+    Tm = dH / (dS + 1.987 * log(DNA_nM / base)) - T_KELVIN
+    Tm -= dmso_conc * dmso_fact
+    Tm += (0.453 * GC_count / len(seq1) - 2.88) * formamide_conc
+    print(f"Tm is {Tm}")
