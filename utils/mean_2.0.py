@@ -2290,6 +2290,7 @@ mm_dh = deque([
 ############# degenerate dict start ###########
 ###############################################
 base_li = ["A", "T", "C", "G"]
+degenerate_bases_li = ["N", "Y", "R", "K", "M", "S", "W", "B", "V", "D", "H", "Z"]
 
 degenerate_base_dict = defaultdict(deque)
 def fill_dict(i: str) -> None:
@@ -2329,7 +2330,6 @@ def is_complement(base1: str, base2: str) -> bool:
 
 # mismatch detective and replace bases
 def modify_bases(duplex_str: str) -> list:
-    degenerate_bases_li = ["N", "Y", "R", "K", "M", "S", "W", "B", "V", "D", "H", "Z"]
     seq1, seq2 = duplex_str.split("\n")
     n_trantab = str.maketrans("ACGT", "CATG")
     modified_seq_li1 = []
@@ -2456,7 +2456,6 @@ def stack_energy(segment: str) -> list:
     stack_dh = 0
     stack_ds = 0
     stack_dg = 0
-    # print(delta_g)
     for i in range(len(segment) - 1):
         two_mer = segment[i] + segment[i + 1]
         d_index = base2int(two_mer)
@@ -2560,7 +2559,7 @@ def bulge_energy(segment: str, bulge_length: int, seq: str, bulge_pos: int) -> l
     return [bulge_loop_dh, bulge_loop_dg]
 
     
-def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int, int_loop_energy_dict: defaultdict) -> list:
+def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int) -> list:
     """对称的int loop结构直接读取矩阵数据累加"""
     symmetric_int_loop_dh = symmetric_int_loop_dg = 0
     # base init
@@ -2689,7 +2688,7 @@ def asymmetric_int_loop_energy(
     asymmetric_int_loop_dg = li_dg + asymmetry_correct_dg + mm_dg + at_dg
     return [asymmetric_int_loop_dh, asymmetric_int_loop_dg]
 
-def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultdict) -> list:
+def int_loop_energy(segment1: str, segment2: str) -> list:
     """对intloop进行分型并计算能量"""
     int_loop_dh = 0
     int_loop_dg = 0
@@ -2716,7 +2715,7 @@ def int_loop_energy(segment1: str, segment2: str, int_loop_energy_dict: defaultd
     
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
-        symmetric_int_loop_dh, symmetric_int_loop_dg = symmetric_int_loop_energy(segment1, segment2, loop_sum, int_loop_energy_dict)
+        symmetric_int_loop_dh, symmetric_int_loop_dg = symmetric_int_loop_energy(segment1, segment2)
         int_loop_dh += symmetric_int_loop_dh
         int_loop_dg += symmetric_int_loop_dg
     # Other Internal Loops
@@ -2754,12 +2753,9 @@ def divalent_to_monovalent(divalent,dntp):
     if divalent < dntp:divalent = dntp
     return 120 * sqrt((divalent - dntp))
 
-def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
-        # init variable
+def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict, multi_pos_dict: defaultdict) -> float:
+    # init variable
     dH = dG = 0
-    # base = 4000000000
-    # T_KELVIN = 273.15
-    # DNA_nM = 50
 
     seq1, seq2 = duplex_str.split("\n")
     region_pos_li = loop_region_dict["region_pos"]
@@ -2799,7 +2795,7 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
                 dH += bulge_dh
                 dG += bulge_dg
             else:  # int loop
-                int_loop_dh, int_loop_dg = int_loop_energy(segment1, segment2, int_loop_energy_dict)
+                int_loop_dh, int_loop_dg = int_loop_energy(segment1, segment2)
                 dH += int_loop_dh
                 dG += int_loop_dg 
         region_idx += 1       
