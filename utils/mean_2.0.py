@@ -2291,6 +2291,8 @@ mm_dh = deque([
 ###############################################
 base_li = ["A", "T", "C", "G"]
 degenerate_bases_li = ["N", "Y", "R", "K", "M", "S", "W", "B", "V", "D", "H", "Z"]
+n_trantab = str.maketrans("ACGT", "CATG")
+
 
 degenerate_base_dict = defaultdict(deque)
 def fill_dict(i: str) -> None:
@@ -2331,7 +2333,6 @@ def is_complement(base1: str, base2: str) -> bool:
 # mismatch detective and replace bases
 def modify_bases(duplex_str: str) -> list:
     seq1, seq2 = duplex_str.split("\n")
-    n_trantab = str.maketrans("ACGT", "CATG")
     modified_seq_li1 = []
     modified_seq_li2 = []
     multi_pos_dict = defaultdict(deque) # pos->bases
@@ -2645,16 +2646,34 @@ def asymmetric_int_loop_mismatch_energy(
     mismatch2_dh = mismatch2_dg = 0
     # min loop length == 1,do NOT consider mismatch energy
     if int_loop_type[0] == 1:return [0.0, 0.0]
-    # mismatch energy calc by segment
-    external_index = base2int(segment1[0])
-    internal_index = base2int(segment1[1] + segment2[1])
-    mismatch1_dh = mm_dh[external_index][internal_index]
-    mismatch1_dg = mm_dg[external_index][internal_index]
+    # mean mismatch energy calc by segment
+    if segment2[1] in base_li or segment2[1] == "N":
+        external_index = base2int(segment1[0])
+        internal_index = base2int(segment1[1] + segment2[1])
+        mismatch1_dh = mm_dh[external_index][internal_index]
+        mismatch1_dg = mm_dg[external_index][internal_index]
+    else:
+        for i in degenerate_base_dict[segment2[1]]:
+            external_index = base2int(segment1[0])
+            internal_index = base2int(i.translate(n_trantab) + i)
+            mismatch1_dh += mm_dh[external_index][internal_index]
+            mismatch1_dg += mm_dg[external_index][internal_index]
+        mismatch1_dh /= len(degenerate_base_dict[segment2[1]])
+        mismatch1_dg /= len(degenerate_base_dict[segment2[1]])
     
-    external_index = base2int(segment2[-1])
-    internal_index = base2int(segment2[-2] + segment1[-2])
-    mismatch2_dh = mm_dh[external_index][internal_index]
-    mismatch2_dg = mm_dg[external_index][internal_index]
+    if segment2[-2] in base_li or segment2[-2] == "N":
+        external_index = base2int(segment2[-1])
+        internal_index = base2int(segment2[-2] + segment1[-2])
+        mismatch2_dh = mm_dh[external_index][internal_index]
+        mismatch2_dg = mm_dg[external_index][internal_index]
+    else:
+        for i in degenerate_base_dict[segment2[-2]]:
+            external_index = base2int(segment2[-1])
+            internal_index = base2int(i + i.translate(n_trantab))
+            mismatch2_dh += mm_dh[external_index][internal_index]
+            mismatch2_dg += mm_dg[external_index][internal_index]
+        mismatch2_dh /= len(degenerate_base_dict[segment2[1]])
+        mismatch2_dg /= len(degenerate_base_dict[segment2[1]])
     
     mismatch_dh = mismatch1_dh + mismatch2_dh
     mismatch_dg = mismatch1_dg + mismatch2_dg
