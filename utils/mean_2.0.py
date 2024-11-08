@@ -2290,6 +2290,7 @@ mm_dh = deque([
 ############# degenerate dict start ###########
 ###############################################
 base_li = ["A", "T", "C", "G"]
+basen_li = ["A", "T", "C", "G", "N"]
 degenerate_bases_li = ["N", "Y", "R", "K", "M", "S", "W", "B", "V", "D", "H", "Z"]
 n_trantab = str.maketrans("ACGT", "CATG")
 
@@ -2571,24 +2572,86 @@ def symmetric_int_loop_energy(segment1: str, segment2: str, loop_sum: int) -> li
     
     # 1 * 1
     if loop_sum == 2:
-       external_index, internal_index = index_intl11(upstream_base, downstream_base, x_base, y_base)
-       symmetric_int_loop_dh += int_loop_energy_dict["11dh"][external_index][internal_index]
-       symmetric_int_loop_dg += int_loop_energy_dict["11dg"][external_index][internal_index]
+        # no degenerate base
+        if y_base in basen_li:
+            external_index, internal_index = index_intl11(upstream_base, downstream_base, x_base, y_base)
+            symmetric_int_loop_dh += int_loop_energy_dict["11dh"][external_index][internal_index]
+            symmetric_int_loop_dg += int_loop_energy_dict["11dg"][external_index][internal_index]
+        # degenerate base
+        else:
+            for i in degenerate_base_dict[y_base]:
+                external_index, internal_index = index_intl11(upstream_base, downstream_base, i.translate(n_trantab), i)
+                symmetric_int_loop_dh += int_loop_energy_dict["11dh"][external_index][internal_index]
+                symmetric_int_loop_dg += int_loop_energy_dict["11dg"][external_index][internal_index]
+            symmetric_int_loop_dh /= len(degenerate_base_dict[y_base])
+            symmetric_int_loop_dg /= len(degenerate_base_dict[y_base])
     # 1 * 2
     elif loop_sum == 3:
         y_neibor_base = segment2[2]
-        external_index, internal_index = index_intl21(upstream_base, downstream_base, x_base, y_base, y_neibor_base)
-        symmetric_int_loop_dh += int_loop_energy_dict["21dh"][external_index][internal_index]
-        symmetric_int_loop_dg += int_loop_energy_dict["21dg"][external_index][internal_index]
+        # no de
+        if y_base in basen_li and y_neibor_base in basen_li:  
+            external_index, internal_index = index_intl21(upstream_base, downstream_base, x_base, y_base, y_neibor_base)
+            symmetric_int_loop_dh += int_loop_energy_dict["21dh"][external_index][internal_index]
+            symmetric_int_loop_dg += int_loop_energy_dict["21dg"][external_index][internal_index]
+        else:
+            # are neibor and y base de?
+            if y_neibor_base in basen_li: # y base is de
+                for i in degenerate_base_dict[y_base]:
+                    external_index, internal_index = index_intl21(upstream_base, downstream_base, i.translate(n_trantab), i, y_neibor_base)
+                    symmetric_int_loop_dh += int_loop_energy_dict["21dh"][external_index][internal_index]
+                    symmetric_int_loop_dg += int_loop_energy_dict["21dg"][external_index][internal_index]
+                symmetric_int_loop_dh /= len(degenerate_base_dict[y_base])
+                symmetric_int_loop_dg /= len(degenerate_base_dict[y_base])
+            elif y_base in basen_li: #  y_neibor_base is de
+                for i in degenerate_base_dict[y_neibor_base]:
+                    external_index, internal_index = index_intl21(upstream_base, downstream_base, x_base, y_base, i)
+                    symmetric_int_loop_dh += int_loop_energy_dict["21dh"][external_index][internal_index]
+                    symmetric_int_loop_dg += int_loop_energy_dict["21dg"][external_index][internal_index]
+                symmetric_int_loop_dh /= len(degenerate_base_dict[y_neibor_base])
+                symmetric_int_loop_dg /= len(degenerate_base_dict[y_neibor_base])
+            else: # both de
+                for i in degenerate_base_dict[y_base]:
+                    for j in degenerate_base_dict[y_neibor_base]:
+                        external_index, internal_index = index_intl21(upstream_base, downstream_base, i.translate(n_trantab), i, j)
+                        symmetric_int_loop_dh += int_loop_energy_dict["21dh"][external_index][internal_index]
+                        symmetric_int_loop_dg += int_loop_energy_dict["21dg"][external_index][internal_index]
+                symmetric_int_loop_dh /= (len(degenerate_base_dict[y_base]) * len(degenerate_base_dict[y_neibor_base]))
+                symmetric_int_loop_dg /= (len(degenerate_base_dict[y_base]) * len(degenerate_base_dict[y_neibor_base]))                                       
     # 2 * 2
     else:
         x_base1 = x_base
         x_base2 = y_base
         y_base1 = segment1[2]
         y_base2 = segment2[2]
-        external_index, internal_index = index_intl22(upstream_base, downstream_base, x_base1, y_base1, x_base2, y_base2)
-        symmetric_int_loop_dh += int_loop_energy_dict["22dh"][external_index][internal_index]
-        symmetric_int_loop_dg += int_loop_energy_dict["22dg"][external_index][internal_index]
+        # no de
+        if x_base2 in basen_li and y_base2 in basen_li:
+            external_index, internal_index = index_intl22(upstream_base, downstream_base, x_base1, y_base1, x_base2, y_base2)
+            symmetric_int_loop_dh += int_loop_energy_dict["22dh"][external_index][internal_index]
+            symmetric_int_loop_dg += int_loop_energy_dict["22dg"][external_index][internal_index]
+        else:
+            if x_base2 in basen_li: # y_base2 is de
+                for i in degenerate_base_dict[y_base2]:
+                    external_index, internal_index = index_intl22(upstream_base, downstream_base, x_base1, i.translate(n_trantab), x_base2, i)
+                    symmetric_int_loop_dh += int_loop_energy_dict["22dh"][external_index][internal_index]
+                    symmetric_int_loop_dg += int_loop_energy_dict["22dg"][external_index][internal_index]
+                symmetric_int_loop_dh /= len(degenerate_base_dict[y_base2])
+                symmetric_int_loop_dg /= len(degenerate_base_dict[y_base2])
+            elif y_base2 in basen_li: # x_base2 is de
+                for i in degenerate_base_dict[x_base2]:
+                    external_index, internal_index = index_intl22(upstream_base, downstream_base, i.translate(n_trantab), y_base1, i, y_base2)
+                    symmetric_int_loop_dh += int_loop_energy_dict["22dh"][external_index][internal_index]
+                    symmetric_int_loop_dg += int_loop_energy_dict["22dg"][external_index][internal_index]
+                symmetric_int_loop_dh /= len(degenerate_base_dict[x_base2])
+                symmetric_int_loop_dg /= len(degenerate_base_dict[x_base2])
+            else: #both de
+                for i in degenerate_base_dict[x_base2]:
+                    for j in degenerate_base_dict[y_base2]:
+                        external_index, internal_index = index_intl22(upstream_base, downstream_base, i.translate(n_trantab), j.translate(n_trantab), i, j)
+                        symmetric_int_loop_dh += int_loop_energy_dict["22dh"][external_index][internal_index]
+                        symmetric_int_loop_dg += int_loop_energy_dict["22dg"][external_index][internal_index]
+                symmetric_int_loop_dh /= (len(degenerate_base_dict[x_base2]) * len(degenerate_base_dict[y_base2]))
+                symmetric_int_loop_dg /= (len(degenerate_base_dict[x_base2]) * len(degenerate_base_dict[y_base2]))
+                
     print(f"symmetric_int_loop_dg is {symmetric_int_loop_dg}")
     
     return [symmetric_int_loop_dh, symmetric_int_loop_dg]
@@ -2647,7 +2710,7 @@ def asymmetric_int_loop_mismatch_energy(
     # min loop length == 1,do NOT consider mismatch energy
     if int_loop_type[0] == 1:return [0.0, 0.0]
     # mean mismatch energy calc by segment
-    if segment2[1] in base_li or segment2[1] == "N":
+    if segment2[1] in basen_li:
         external_index = base2int(segment1[0])
         internal_index = base2int(segment1[1] + segment2[1])
         mismatch1_dh = mm_dh[external_index][internal_index]
@@ -2661,7 +2724,7 @@ def asymmetric_int_loop_mismatch_energy(
         mismatch1_dh /= len(degenerate_base_dict[segment2[1]])
         mismatch1_dg /= len(degenerate_base_dict[segment2[1]])
     
-    if segment2[-2] in base_li or segment2[-2] == "N":
+    if segment2[-2] in basen_li:
         external_index = base2int(segment2[-1])
         internal_index = base2int(segment2[-2] + segment1[-2])
         mismatch2_dh = mm_dh[external_index][internal_index]
@@ -2708,6 +2771,9 @@ def asymmetric_int_loop_energy(
     return [asymmetric_int_loop_dh, asymmetric_int_loop_dg]
 
 def int_loop_energy(segment1: str, segment2: str) -> list:
+    # print(segment1)
+    # print(segment2)
+    # exit()
     """对intloop进行分型并计算能量"""
     int_loop_dh = 0
     int_loop_dg = 0
@@ -2734,7 +2800,7 @@ def int_loop_energy(segment1: str, segment2: str) -> list:
     
     # 1×1, 1×2, 2×2 Internal Loops
     if is_symmetric:
-        symmetric_int_loop_dh, symmetric_int_loop_dg = symmetric_int_loop_energy(segment1, segment2)
+        symmetric_int_loop_dh, symmetric_int_loop_dg = symmetric_int_loop_energy(segment1, segment2, loop_sum)
         int_loop_dh += symmetric_int_loop_dh
         int_loop_dg += symmetric_int_loop_dg
     # Other Internal Loops
@@ -2772,7 +2838,7 @@ def divalent_to_monovalent(divalent,dntp):
     if divalent < dntp:divalent = dntp
     return 120 * sqrt((divalent - dntp))
 
-def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict, multi_pos_dict: defaultdict) -> float:
+def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict) -> float:
     # init variable
     dH = dG = 0
 
@@ -2864,3 +2930,14 @@ def calc_Tm_by_NN(duplex_str: str, loop_region_dict: defaultdict, multi_pos_dict
     Tm -= dmso_conc * dmso_fact
     Tm += (0.453 * GC_count / len(seq1) - 2.88) * formamide_conc
     print(f"Tm is {Tm}")
+    
+
+def main() -> None:
+    duplex_str = "CCTNYKG\nGAAYCMC"
+    m_str, m_dict = modify_bases(duplex_str)
+    loop_dict = loop_detective(m_str)
+    calc_Tm_by_NN(m_str, loop_dict)
+    
+
+if __name__ == "__main__":
+    main()
