@@ -2190,12 +2190,127 @@ stack_dh = [-7.9, -8.4, -7.8, -7.2, -7.8, -8.5, -8.0, -10.6, -7.8, -8.7, -8.2, -
 stack_ds = [-22.2, -22.4, -21.0, -20.4, -21.5, -22.7, -19.9, -27.2, -21.0, -22.7, -22.2, -24.4, -19.9, -22.4, -22.2, -21.3, -22.2, -22.7, -22.2, -22.1, -22.1, -22.2, -22.7, -21.5, -22.1]
 
 
+############# degenerate dict start ###########
+###############################################
+base_li = ["A", "T", "C", "G"]
+
+degenerate_base_dict = defaultdict(deque)
+def fill_dict(i: str) -> None:
+    degenerate_base_dict[i] = deque([i])
+[fill_dict(i) for i in base_li]
+
+degenerate_base_dict['R'] = deque(["A", "G"])
+degenerate_base_dict['Y'] = deque(["C", "T"])
+degenerate_base_dict['M'] = deque(["C", "A"])
+degenerate_base_dict['K'] = deque(["T", "G"])
+degenerate_base_dict['S'] = deque(["C", "G"])
+degenerate_base_dict['W'] = deque(["T", "A"])
+    
+degenerate_base_dict['B'] = deque(["G", "T", "C"])
+degenerate_base_dict['V'] = deque(["G", "A", "C"])
+degenerate_base_dict['D'] = deque(["G", "A", "T"])
+degenerate_base_dict['H'] = deque(["C", "A", "T"])
+    
+degenerate_base_dict['N'] = deque(["C", "A", "T", "G"])
+    
+degenerate_base_dict['Z'] = deque([])
+
 
 
 ######## actual compute start ########
 ######################################
+def complement_base(base: str) -> str:
+    trantab = str.maketrans("ACGTNRYMKSWVBHDZ", "TGCANYRKMSWBVDHZ")
+    return base.upper().translate(trantab)
+
+
+
+def is_complement(base1: str, base2: str) -> bool:
+    return complement_base(base1) == base2.upper()
+
+
 
 # mismatch detective and replace bases
+def modify_bases(duplex_str: str) -> list:
+    degenerate_bases_li = ["N", "Y", "R", "K", "M", "S", "W", "B", "V", "D", "H", "Z"]
+    base_gap_li = ["A", "C", "G", "T", "-"]
+    seq1, seq2 = duplex_str.split("\n")
+    n_trantab = str.maketrans("ACGT", "CATG")
+    modified_seq_li1 = []
+    modified_seq_li2 = []
+    multi_pos_dict = defaultdict(deque) # pos->bases
+    for idx, (x, y) in enumerate(zip(seq1, seq2)):
+        if y in base_li and x in base_li:
+            modified_seq_li1.append(x)
+            modified_seq_li2.append(y)
+            continue
+        if y == "-" or x == "-":
+            modified_seq_li1.append(x)
+            modified_seq_li2.append(y)
+            continue
+        # replace (degenerate bases and N) to mismatch base
+        if x in degenerate_bases_li:
+            # n -> 1
+            if y in base_li:
+                modified_seq_li1.append(y.translate(n_trantab))
+                modified_seq_li2.append(y)
+            # n -> m
+            else:
+                # complement degenerate base
+                if is_complement(x, y):
+                    modified_seq_li1.append("N")
+                    modified_seq_li2.append("N")
+                # not complement, record de positon
+                else:
+                    modified_seq_li1.append(x)
+                    modified_seq_li2.append(y)
+                    multi_pos_dict[idx] = degenerate_base_dict[y]
+            continue
+                
+        if y in degenerate_bases_li:
+            # n -> 1
+            if x in base_li:
+                modified_seq_li1.append(x)
+                modified_seq_li2.append(x.translate(n_trantab))
+            else:
+                # complement degenerate base
+                if is_complement(x, y):
+                    modified_seq_li1.append("N")
+                    modified_seq_li2.append("N")
+                # not complement, record de positon
+                else:
+                    modified_seq_li1.append(x)
+                    modified_seq_li2.append(y)
+                    multi_pos_dict[idx] = degenerate_base_dict[y]
+    modified_duplex_str = "".join(modified_seq_li1) + "\n" + "".join(modified_seq_li2)
+    return modified_duplex_str, multi_pos_dict
+
+
+def loop_detective(duplex_str: str) -> defaultdict:
+    seq1, seq2 = duplex_str.split("\n")
+	# record mismatch and gaps,then recogonize bulge loop and internal loop
+    loop_region_dict = defaultdict(
+        deque
+    )  # region_pos: start and end index, region_type: 0 for bulge,1 for int loop
+    region_type_flag = 0  # 0 for bulge,1 for int loop
+    flag = 0  # switch to record region start and end index
+    for idx, (x, y) in enumerate(zip(seq1, seq2)):
+        # mismatch or gap,record region start
+        if not is_complement(x, y) and not flag:
+            loop_region_dict["region_pos"].append(idx)
+            flag = 1
+        # mismatch found,record int loop
+        if (x != "-" and y != "-") and not is_complement(x,y):
+            region_type_flag = 1
+        # record region end
+        if is_complement(x, y) and flag:
+            loop_region_dict["region_pos"].append(idx - 1)
+            loop_region_dict["region_type"].append(region_type_flag)
+            flag = 0
+            region_type_flag = 0
+    return loop_region_dict
+
+
 
 
 
