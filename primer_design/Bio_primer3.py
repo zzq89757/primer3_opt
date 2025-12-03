@@ -151,33 +151,34 @@ const_args = {
 # 各个选项需要变更的参数
 setting_args = {
     "pick_pcr_primers_and_hyb_probe": {
-        "PRIMER_PICK_ANYWAY": 1,
-        "PRIMER_PRODUCT_SIZE_RANGE": [[70, 150]],
-        "PRIMER_GC_CLAMP": 1,
-        "PRIMER_WT_GC_PERCENT_GT": 0.5,
-        "PRIMER_WT_GC_PERCENT_LT": 0.5,
-        "PRIMER_INTERNAL_MIN_SIZE": 18,
-        "PRIMER_INTERNAL_OPT_SIZE": 25,
-        "PRIMER_INTERNAL_MAX_SIZE": 30,
-        "PRIMER_INTERNAL_MIN_TM": 68.0,
-        "PRIMER_INTERNAL_OPT_TM": 70.0,
-        "PRIMER_INTERNAL_MAX_TM": 72.0,
-        "PRIMER_INTERNAL_MIN_GC": 70.0,
-        "PRIMER_INTERNAL_OPT_GC_PERCENT": 80.0,
-        "PRIMER_INTERNAL_MAX_GC": 90.0,
-        "PRIMER_INTERNAL_WT_GC_PERCENT_GT": 0.5,
-        "PRIMER_INTERNAL_WT_GC_PERCENT_LT": 0.5,
-        "PRIMER_INTERNAL_MAX_POLY_X": 3,
+        "PRIMER_TASK": "pick_pcr_primers_and_hyb_probe",
+        # "PRIMER_PICK_ANYWAY": 1,
+        # "PRIMER_PRODUCT_SIZE_RANGE": [[70, 150]],
+        # "PRIMER_GC_CLAMP": 1,
+        # "PRIMER_WT_GC_PERCENT_GT": 0.5,
+        # "PRIMER_WT_GC_PERCENT_LT": 0.5,
+        # "PRIMER_INTERNAL_MIN_SIZE": 18,
+        # "PRIMER_INTERNAL_OPT_SIZE": 25,
+        # "PRIMER_INTERNAL_MAX_SIZE": 30,
+        # "PRIMER_INTERNAL_MIN_TM": 68.0,
+        # "PRIMER_INTERNAL_OPT_TM": 70.0,
+        # "PRIMER_INTERNAL_MAX_TM": 72.0,
+        # "PRIMER_INTERNAL_MIN_GC": 70.0,
+        # "PRIMER_INTERNAL_OPT_GC_PERCENT": 80.0,
+        # "PRIMER_INTERNAL_MAX_GC": 90.0,
+        # "PRIMER_INTERNAL_WT_GC_PERCENT_GT": 0.5,
+        # "PRIMER_INTERNAL_WT_GC_PERCENT_LT": 0.5,
+        # "PRIMER_INTERNAL_MAX_POLY_X": 3,
     },
     "pick_qpcr_primers": {
         "PRIMER_TASK": "pick_pcr_primers",
-        "PRIMER_PICK_ANYWAY": 1,
-        "PRIMER_GC_CLAMP": 1,
-        "PRIMER_MAX_END_GC": 3,
-        "PRIMER_PRODUCT_SIZE_RANGE": [[100, 200]],
-        "PRIMER_WT_GC_PERCENT_GT": 0.5,
-        "PRIMER_WT_GC_PERCENT_LT": 0.5,
-        "PRIMER_WT_POS_PENALTY": 0.0,
+        # "PRIMER_PICK_ANYWAY": 1,
+        # "PRIMER_GC_CLAMP": 1,
+        # "PRIMER_MAX_END_GC": 3,
+        # "PRIMER_PRODUCT_SIZE_RANGE": [[100, 200]],
+        # "PRIMER_WT_GC_PERCENT_GT": 0.5,
+        # "PRIMER_WT_GC_PERCENT_LT": 0.5,
+        # "PRIMER_WT_POS_PENALTY": 0.0,
     },
     "pick_sequencing_primers": {
         "PRIMER_SEQUENCING_SPACING": 600,
@@ -211,10 +212,12 @@ def primer_design(seq_args, alternative_args):
         para_li = ["", "_SEQUENCE", "_TM", "_GC_PERCENT"]
         primer_res_len = len(para_li)
         lsame_list = [f"PRIMER_LEFT_{i}"] * primer_res_len
+        isame_list = [f"PRIMER_INTERNAL_{i}"] * primer_res_len
         rsame_list = [f"PRIMER_RIGHT_{i}"] * primer_res_len
         linfo_list = [lsame_list[i] + para_li[i] for i in range(len(lsame_list))]
+        iinfo_list = [isame_list[i] + para_li[i] for i in range(len(isame_list))]
         rinfo_list = [rsame_list[i] + para_li[i] for i in range(len(rsame_list))]
-        info_list = linfo_list + rinfo_list
+        info_list = linfo_list + rinfo_list if primer_task != "pick_pcr_primers_and_hyb_probe" else linfo_list + iinfo_list + rinfo_list 
         # 若为不成对输出或测序引物，则无产物长度
         if (
             primer_task != "pick_primer_list"
@@ -243,8 +246,8 @@ if __name__ == "__main__":
         ],  # 引物不能落在0~200和400~600位置
         # 设计引物时 引物落在该区域内，留空则为用输入的整段序列设计引物 四个元素分别表示左引物所落区域起始、区域长度，右引物所落区域起始、区域长度
         "SEQUENCE_PRIMER_PAIR_OK_REGION_LIST": [
-            (300, 50, 600,200),
-            [130, 50, 600, 200],
+            # (300, 50, 600,200),
+            # [130, 50, 600, 200],
                                                 
                                                 ]  # 左引物只能落在50~100，右引物只能落在1000~1400
         # 'SEQUENCE_PRIMER_PAIR_OK_REGION_LIST': [[0,50,1000,430],[960,60,1000,430]], # 左引物可落在0~50和960~1020，右引物只能落在1000~1430
@@ -259,8 +262,9 @@ if __name__ == "__main__":
         # pick_qpcr_primers:输出用于qpcr的引物 且输出探针 (自定，非p3现有！！)
         # pick_pcr_primers_and_hyb_probe:输出用于pcr的引物 且输出探针
         # "PRIMER_TASK": "generic",
-        "PRIMER_TASK": "pick_primer_list",
-        # 'PRIMER_TASK': 'pick_pcr_primers_and_hyb_probe',
+        # "PRIMER_TASK": "pick_primer_list",
+        'PRIMER_TASK': 'pick_pcr_primers_and_hyb_probe',
+        # 'PRIMER_TASK': 'pick_qpcr_primers',
         # 'PRIMER_TASK': 'pick_sequencing_primers',
         
         # NUM return(输出的引物对数目 留空则为默认值 允许用户修改)
@@ -290,7 +294,7 @@ if __name__ == "__main__":
 
     myres = primer_design(seq_args, alternative_args)
     
-    for i in range(len(myres)):
-        print(f"LEFT_{i} {myres[i][f"PRIMER_LEFT_{i}"]}",end=";")
-        print(f"RIGHT_{i} {myres[i][f"PRIMER_RIGHT_{i}"]}")
+    # for i in range(len(myres)):
+    #     print(f"LEFT_{i} {myres[i][f"PRIMER_LEFT_{i}"]}",end=";")
+    #     print(f"RIGHT_{i} {myres[i][f"PRIMER_RIGHT_{i}"]}")
     # print(myres)
